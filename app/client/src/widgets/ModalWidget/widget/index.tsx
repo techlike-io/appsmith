@@ -321,8 +321,10 @@ const isAutoFocusEnabled = (
   modalChildrenWidget: WidgetProps[] | undefined,
 ) => {
   if (!modalChildrenWidget) return false;
+  const dataTree = getDataTree(state);
+
   return modalChildrenWidget.some((widget: WidgetProps) => {
-    const widgetState = getDataTree(state)[widget.widgetName] as DataTree;
+    const widgetState = dataTree[widget.widgetName] as DataTree;
     return !!widgetState?.autoFocus;
   });
 };
