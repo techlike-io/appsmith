@@ -4,6 +4,8 @@ import DocumentViewerComponent from "../component";
 import {
   ValidationTypes,
   ValidationResponse,
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
 } from "constants/WidgetValidation";
 import { AutocompleteDataType } from "utils/autocomplete/CodemirrorTernService";
 
@@ -34,12 +36,7 @@ export function documentUrlValidation(value: unknown): ValidationResponse {
         return {
           isValid: false,
           parsed: "",
-          messages: [
-            {
-              name: "ValidationError",
-              text: "Provided URL / Base64 is invalid.",
-            },
-          ],
+          messages: [ValidationError("Provided URL / Base64 is invalid.")],
         };
       }
     } else if (base64Regex.test(value as string)) {
@@ -53,12 +50,7 @@ export function documentUrlValidation(value: unknown): ValidationResponse {
       return {
         isValid: false,
         parsed: "",
-        messages: [
-          {
-            name: "ValidationError",
-            text: "Provided URL / Base64 is invalid.",
-          },
-        ],
+        messages: [ValidationError("Provided URL / Base64 is invalid.")],
       };
     }
   }
@@ -66,7 +58,7 @@ export function documentUrlValidation(value: unknown): ValidationResponse {
   return {
     isValid: true,
     parsed: "",
-    messages: [{ name: "", text: "" }],
+    messages: [EMPTY_ERROR_MESSAGE],
   };
 }
 

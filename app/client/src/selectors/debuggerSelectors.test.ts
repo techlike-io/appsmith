@@ -15,10 +15,9 @@ describe("getFilteredErrors", () => {
           text: "The value at defaultText is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -76,10 +75,9 @@ describe("getFilteredErrors", () => {
           text: "The value at defaultText is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -163,10 +161,9 @@ describe("getFilteredErrors", () => {
           text: "The value at defaultText is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -274,10 +271,9 @@ describe("getFilteredErrors", () => {
           text: "The value at defaultText is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -385,10 +381,9 @@ describe("getFilteredErrors", () => {
           text: "The value at defaultText is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -522,10 +517,9 @@ describe("getFilteredErrors", () => {
           text: "The value at defaultText is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -609,10 +603,9 @@ describe("getFilteredErrors", () => {
           text: "The value at isVisible is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -658,10 +651,9 @@ describe("getFilteredErrors", () => {
           text: "The value at isVisible is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -700,10 +692,9 @@ describe("getFilteredErrors", () => {
           text: "The value at isVisible is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -774,10 +765,9 @@ describe("getFilteredErrors", () => {
           text: "The value at isVisible is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],
@@ -818,10 +808,9 @@ describe("getFilteredErrors", () => {
           text: "The value at isVisible is invalid",
           messages: [
             {
-              message: {
-                name: "TypeError",
-                text: "Cannot read properties of undefined (reading 'users')",
-              },
+              message: new TypeError(
+                "Cannot read properties of undefined (reading 'users')",
+              ),
               type: PropertyEvaluationErrorType.PARSE,
             },
           ],

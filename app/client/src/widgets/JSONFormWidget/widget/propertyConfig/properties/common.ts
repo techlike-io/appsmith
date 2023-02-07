@@ -1,4 +1,6 @@
 import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -83,9 +85,7 @@ function accessorValidation(
     return {
       isValid: false,
       parsed: value,
-      messages: [
-        { name: "ValidationError", text: "Property Name cannot be empty" },
-      ],
+      messages: [ValidationError("Property Name cannot be empty")],
     };
   }
 
@@ -98,9 +98,7 @@ function accessorValidation(
     return {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Property name already in use." },
-      ],
+      messages: [ValidationError("Property name already in use.")],
     };
   }
 
@@ -108,19 +106,14 @@ function accessorValidation(
     return {
       isValid: false,
       parsed: "",
-      messages: [
-        {
-          name: "ValidationError",
-          text: "This is a restricted Property Name",
-        },
-      ],
+      messages: [ValidationError("This is a restricted Property Name")],
     };
   }
 
   return {
     isValid: true,
     parsed: value,
-    messages: [{ name: "", text: "" }],
+    messages: [EMPTY_ERROR_MESSAGE],
   };
 }
 

@@ -8,6 +8,8 @@ import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import {
   ValidationTypes,
   ValidationResponse,
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
 } from "constants/WidgetValidation";
 import {
   createMessage,
@@ -44,18 +46,11 @@ export function defaultValueValidation(
   props: CurrencyInputWidgetProps,
   _?: any,
 ): ValidationResponse {
-  const NUMBER_ERROR_MESSAGE = {
-    name: "TypeError",
-    text: "This value must be number",
-  };
-  const DECIMAL_SEPARATOR_ERROR_MESSAGE = {
-    name: "ValidationError",
-    text: "Please use . as the decimal separator for default values.",
-  };
-  const EMPTY_ERROR_MESSAGE = {
-    name: "",
-    text: "",
-  };
+  const NUMBER_ERROR_MESSAGE = new TypeError("This value must be number");
+  const DECIMAL_SEPARATOR_ERROR_MESSAGE = ValidationError(
+    "Please use . as the decimal separator for default values.",
+  );
+
   const localeLang = navigator.languages?.[0] || "en-US";
 
   function getLocaleDecimalSeperator() {
@@ -111,11 +106,9 @@ export function defaultValueValidation(
     if (parsed !== Number(parsed.toFixed(props.decimals))) {
       isValid = false;
       messages = [
-        {
-          name: "RangeError",
-          text:
-            "No. of decimals are higher than the decimals field set. Please update the default or the decimals field",
-        },
+        new RangeError(
+          "No. of decimals are higher than the decimals field set. Please update the default or the decimals field",
+        ),
       ];
     } else {
       isValid = true;

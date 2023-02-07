@@ -22,12 +22,7 @@ function defaultOptionValueValidation(value: unknown): ValidationResponse {
     return {
       isValid: false,
       parsed: "",
-      messages: [
-        {
-          name: "TypeError",
-          text: "This value does not evaluate to type: string",
-        },
-      ],
+      messages: [new TypeError("This value does not evaluate to type: string")],
     };
   return { isValid: true, parsed: value };
 }

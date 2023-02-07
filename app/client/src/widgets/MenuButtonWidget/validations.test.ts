@@ -1,3 +1,4 @@
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 import _ from "lodash";
 import { sourceDataArrayValidation } from "./validations";
 
@@ -32,7 +33,7 @@ describe("sourceDataArrayValidation", () => {
     const expected = {
       isValid: true,
       parsed: mockSourceData,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
     expect(result).toStrictEqual(expected);
   });
@@ -55,12 +56,7 @@ describe("sourceDataArrayValidation", () => {
     const expected = {
       isValid: false,
       parsed: [],
-      messages: [
-        {
-          name: "RangeError",
-          text: "Source data cannot have more than 10 items",
-        },
-      ],
+      messages: [new RangeError("Source data cannot have more than 10 items")],
     };
     expect(result).toStrictEqual(expected);
   });
@@ -81,12 +77,7 @@ describe("sourceDataArrayValidation", () => {
     const expected = {
       isValid: false,
       parsed: [],
-      messages: [
-        {
-          name: "TypeError",
-          text: "This value does not evaluate to type Array",
-        },
-      ],
+      messages: [new TypeError("This value does not evaluate to type Array")],
     };
     expect(result).toStrictEqual(expected);
   });

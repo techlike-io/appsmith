@@ -10,6 +10,7 @@ import { InputFieldProps } from "widgets/JSONFormWidget/fields/InputField";
 import { ISDCodeDropdownOptions } from "widgets/PhoneInputWidget/component/ISDCodeDropdown";
 import { JSONFormWidgetProps } from "../..";
 import {
+  EMPTY_ERROR_MESSAGE,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -31,7 +32,7 @@ function defaultValueValidation(
     return {
       isValid: true,
       parsed: value,
-      messages: [{ name: "ondhu 2", text: "eradu 2" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 
@@ -46,7 +47,7 @@ function defaultValueValidation(
         return {
           isValid: true,
           parsed: undefined,
-          messages: [{ name: "ondhu 3", text: "eradu 3" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         };
       }
 
@@ -54,9 +55,7 @@ function defaultValueValidation(
         return {
           isValid: false,
           parsed: undefined,
-          messages: [
-            { name: "TypeError", text: "This value must be a number" },
-          ],
+          messages: [new TypeError("This value must be a number")],
         };
       }
     }
@@ -64,7 +63,7 @@ function defaultValueValidation(
     return {
       isValid: true,
       parsed,
-      messages: [{ name: "ondhu 4", text: "eradu 4" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 
@@ -72,7 +71,7 @@ function defaultValueValidation(
     return {
       isValid: false,
       parsed: JSON.stringify(value, null, 2),
-      messages: [{ name: "TypeError", text: "This value must be string" }],
+      messages: [new TypeError("This value must be string")],
     };
   }
 
@@ -86,7 +85,7 @@ function defaultValueValidation(
       return {
         isValid: false,
         parsed: "",
-        messages: [{ name: "TypeError", text: "This value must be string" }],
+        messages: [new TypeError("This value must be string")],
       };
     }
   }
@@ -94,7 +93,7 @@ function defaultValueValidation(
   return {
     isValid,
     parsed: parsed,
-    messages: [{ name: "", text: "" }],
+    messages: [EMPTY_ERROR_MESSAGE],
   };
 }
 
@@ -116,30 +115,25 @@ export function minValueValidation(
     return {
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "ondhu 6", text: "eradu 6" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   } else if (!Number.isFinite(min)) {
     return {
       isValid: false,
       parsed: undefined,
-      messages: [{ name: "TypeError", text: "This value must be number" }],
+      messages: [new TypeError("This value must be number")],
     };
   } else if (max !== undefined && min >= max) {
     return {
       isValid: false,
       parsed: undefined,
-      messages: [
-        {
-          name: "RangeError",
-          text: "This value must be lesser than max value",
-        },
-      ],
+      messages: [new RangeError("This value must be lesser than max value")],
     };
   } else {
     return {
       isValid: true,
       parsed: min,
-      messages: [{ name: "ondhu 7", text: "eradu 7" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 }
@@ -162,24 +156,19 @@ export function maxValueValidation(
     return {
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "ondhu 8", text: "eradu 8" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   } else if (!Number.isFinite(max)) {
     return {
       isValid: false,
       parsed: undefined,
-      messages: [{ name: "TypeError", text: "This value must be number" }],
+      messages: [new TypeError("This value must be number")],
     };
   } else if (min !== undefined && max <= min) {
     return {
       isValid: false,
       parsed: undefined,
-      messages: [
-        {
-          name: "RangeError",
-          text: "This value must be greater than min value",
-        },
-      ],
+      messages: [new RangeError("This value must be greater than min value")],
     };
   } else {
     return {

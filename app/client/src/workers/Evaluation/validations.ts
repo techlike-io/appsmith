@@ -4,6 +4,8 @@ import {
   ValidationTypes,
   ValidationResponse,
   Validator,
+  ValidationError,
+  EMPTY_ERROR_MESSAGE,
 } from "constants/WidgetValidation";
 import _, {
   compact,
@@ -25,7 +27,6 @@ import evaluate from "./evaluate";
 import getIsSafeURL from "utils/validation/getIsSafeURL";
 import * as log from "loglevel";
 import { countOccurrences, findDuplicateIndex } from "./helpers";
-import { ErrorMessage } from "utils/DynamicBindingUtils";
 export const UNDEFINED_VALIDATION = "UNDEFINED_VALIDATION";
 export const VALIDATION_ERROR_COUNT_THRESHOLD = 10;
 const MAX_ALLOWED_LINE_BREAKS = 1000; // Rendering performance deteriorates beyond this number.
@@ -63,7 +64,7 @@ function validatePlainObject(
 ) {
   if (config.params?.allowedKeys) {
     let _valid = true;
-    const _messages: ErrorMessage[] = [];
+    const _messages: Error[] = [];
     config.params.allowedKeys.forEach((entry) => {
       const ignoreCase = !!entry.params?.ignoreCase;
       const entryName = getPropertyEntry(value, entry.name, ignoreCase);
@@ -82,16 +83,13 @@ function validatePlainObject(
             messages.map((message) => {
               _messages.push({
                 name: message.name,
-                text: `Value of key: ${entryName} is invalid: ${message.text}`,
+                message: `Value of key: ${entryName} is invalid: ${message.message}`,
               });
             });
         }
       } else if (entry.params?.required || entry.params?.requiredKey) {
         _valid = false;
-        _messages.push({
-          name: "ValidationError",
-          text: `Missing required key: ${entryName}`,
-        });
+        _messages.push(ValidationError(`Missing required key: ${entryName}`));
       }
     });
     if (_valid) {
@@ -119,7 +117,7 @@ function validateArray(
   propertyPath: string,
 ) {
   let _isValid = true; // Let's first assume that this is valid
-  const _messages: ErrorMessage[] = []; // Initialise messages array
+  const _messages: Error[] = []; // Initialise messages array
 
   // Values allowed in the array, converted into a set of unique values
   // or an empty set
@@ -180,10 +178,9 @@ function validateArray(
         isValid: false,
         parsed: config.params?.default || [],
         messages: [
-          {
-            name: "ValidationError",
-            text: `Array must be unique. Duplicate values found at index: ${duplicateIndex}`,
-          },
+          ValidationError(
+            `Array must be unique. Duplicate values found at index: ${duplicateIndex}`,
+          ),
         ],
       };
     }
@@ -207,12 +204,11 @@ function validateArray(
         isValid: false,
         parsed: config.params?.default || [],
         messages: [
-          {
-            name: "ValidationError",
-            text: `Duplicate values found for the following properties, in the array entries, that must be unique -- ${uniqueKeys.join(
+          ValidationError(
+            `Duplicate values found for the following properties, in the array entries, that must be unique -- ${uniqueKeys.join(
               ",",
             )}.`,
-          },
+          ),
         ],
       };
     }
@@ -222,10 +218,9 @@ function validateArray(
   value.every((entry, index) => {
     // Validate for allowed values
     if (shouldVerifyAllowedValues && !allowedValues.has(entry)) {
-      _messages.push({
-        name: "ValidationError",
-        text: `Value is not allowed in this array: ${entry}`,
-      });
+      _messages.push(
+        ValidationError(`Value is not allowed in this array: ${entry}`),
+      );
       _isValid = false;
     }
 
@@ -245,7 +240,7 @@ function validateArray(
         childValidationResult.messages?.forEach((message) =>
           _messages.push({
             name: message.name,
-            text: `Invalid entry at index: ${index}. ${message.text}`,
+            message: `Invalid entry at index: ${index}. ${message.message}`,
           }),
         );
       }
@@ -407,12 +402,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
           isValid: false,
           parsed: config.params?.default || "",
           messages: [
-            {
-              name: "TypeError",
-              text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(
-                config,
-              )}`,
-            },
+            new TypeError(
+              `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+            ),
           ],
         };
       }
@@ -433,22 +425,16 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         return {
           isValid: false,
           parsed: JSON.stringify(validateObjectValues(value)), // Parse without line breaks
-          messages: [
-            {
-              name: "ValidationError",
-              text: LINE_BREAKS_ERROR_MESSAGE,
-            },
-          ],
+          messages: [ValidationError(LINE_BREAKS_ERROR_MESSAGE)],
         };
       }
       return {
         isValid: false,
         parsed: JSON.stringify(validateObjectValues(value), null, 2),
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+          ),
         ],
       };
     }
@@ -458,10 +444,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       isValid: false,
       parsed: config.params?.default || "",
       messages: [
-        {
-          name: "TypeError",
-          text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-        },
+        new TypeError(
+          `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+        ),
       ],
     };
     if (!isValid) {
@@ -480,21 +465,14 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       return {
         isValid: false,
         parsed: JSON.stringify(value), // Parse without line breaks
-        messages: [
-          { name: "ValidationError", text: LINE_BREAKS_ERROR_MESSAGE },
-        ],
+        messages: [ValidationError(LINE_BREAKS_ERROR_MESSAGE)],
       };
     }
     if (config.params?.allowedValues) {
       if (!config.params?.allowedValues.includes((parsed as string).trim())) {
         return {
           parsed: config.params?.default || "",
-          messages: [
-            {
-              name: "ValidationError",
-              text: `Disallowed value: ${parsed}`,
-            },
-          ],
+          messages: [ValidationError(`Disallowed value: ${parsed}`)],
           isValid: false,
         };
       }
@@ -505,11 +483,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         parsed: (parsed as string)?.substring(0, 200000),
         isValid: false,
         messages: [
-          {
-            name: "ValidationError",
-            text:
-              "Excessive text length without a line break. Rendering a substring to avoid app crash.",
-          },
+          ValidationError(
+            "Excessive text length without a line break. Rendering a substring to avoid app crash.",
+          ),
         ],
       };
     }
@@ -522,10 +498,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       return {
         parsed: config.params?.default || "",
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+          ),
         ],
         isValid: false,
       };
@@ -555,10 +530,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         isValid: false,
         parsed: new RegExp(parsed),
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+          ),
         ],
       };
     }
@@ -575,12 +549,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         return {
           isValid: false,
           parsed: config.params?.default || 0,
-          messages: [
-            {
-              name: "ValidationError",
-              text: "This value is required",
-            },
-          ],
+          messages: [ValidationError("This value is required")],
         };
       }
 
@@ -601,10 +570,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         isValid: false,
         parsed: config.params?.default || 0,
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+          ),
         ],
       };
     }
@@ -619,12 +587,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
           isValid: false,
           parsed: value || config.params?.default || 0,
           messages: [
-            {
-              name: "TypeError",
-              text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(
-                config,
-              )}`,
-            },
+            new TypeError(
+              `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+            ),
           ],
         };
       }
@@ -644,10 +609,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
               ? parsed || config.params.min || 0
               : parsed ?? config.params.min ?? 0,
           messages: [
-            {
-              name: "RangeError",
-              text: `Minimum allowed value: ${config.params.min}`,
-            },
+            new RangeError(`Minimum allowed value: ${config.params.min}`),
           ],
         };
       }
@@ -662,10 +624,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
           isValid: false,
           parsed: config.params.max || parsed || 0,
           messages: [
-            {
-              name: "RangeError",
-              text: `Maximum allowed value: ${config.params.max}`,
-            },
+            new RangeError(`Maximum allowed value: ${config.params.max}`),
           ],
         };
       }
@@ -674,12 +633,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       return {
         isValid: false,
         parsed: config.params.default || parsed || 0,
-        messages: [
-          {
-            name: "ValidationError",
-            text: `Value should be a positive integer`,
-          },
-        ],
+        messages: [ValidationError(`Value should be a positive integer`)],
       };
     }
 
@@ -699,12 +653,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
           isValid: false,
           parsed: !!config.params?.default,
           messages: [
-            {
-              name: "TypeError",
-              text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(
-                config,
-              )}`,
-            },
+            new TypeError(
+              `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+            ),
           ],
         };
       }
@@ -730,10 +681,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         isValid: false,
         parsed: config.params?.default || false,
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+          ),
         ],
       };
     }
@@ -756,12 +706,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
           isValid: false,
           parsed: config.params?.default || {},
           messages: [
-            {
-              name: "TypeError",
-              text: `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(
-                config,
-              )}`,
-            },
+            new TypeError(
+              `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
+            ),
           ],
         };
       }
@@ -789,10 +736,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         isValid: false,
         parsed: config.params?.default || {},
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
+          ),
         ],
       };
     } catch (e) {
@@ -800,10 +746,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         isValid: false,
         parsed: config.params?.default || {},
         messages: [
-          {
-            name: "TypeError",
-            text: `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
-          },
+          new TypeError(
+            `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
+          ),
         ],
       };
     }
@@ -818,10 +763,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       isValid: false,
       parsed: config.params?.default || [],
       messages: [
-        {
-          name: "TypeError",
-          text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-        },
+        new TypeError(
+          `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+        ),
       ],
     };
     if (value === undefined || value === null || value === "") {
@@ -831,11 +775,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         !isArray(config.params.default)
       ) {
         invalidResponse.messages = [
-          {
-            name: "ValidationError",
-            text:
-              "This property is required for the widget to function correctly",
-          },
+          ValidationError(
+            "This property is required for the widget to function correctly",
+          ),
         ];
         return invalidResponse;
       }
@@ -885,10 +827,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       isValid: false,
       parsed: config.params?.default || [{}],
       messages: [
-        {
-          name: "TypeError",
-          text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-        },
+        new TypeError(
+          `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+        ),
       ],
     };
     if (value === undefined || value === null || value === "") {
@@ -933,12 +874,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         if (!isPlainObject(parsedEntry)) {
           return {
             ...invalidResponse,
-            messages: [
-              {
-                name: "ValidationError",
-                text: `Invalid object at index ${index}`,
-              },
-            ],
+            messages: [ValidationError(`Invalid object at index ${index}`)],
           };
         }
       }
@@ -957,10 +893,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       isValid: false,
       parsed: config.params?.default || [],
       messages: [
-        {
-          name: "TypeError",
-          text: `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
-        },
+        new TypeError(
+          `${WIDGET_TYPE_VALIDATION_ERROR} ${getExpectedType(config)}`,
+        ),
       ],
     };
     response = VALIDATORS.ARRAY(config, value, props, propertyPath);
@@ -981,10 +916,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
               ...response,
               isValid: false,
               messages: [
-                {
-                  name: "ValidationError",
-                  text: `path:${param} must be unique. Duplicate values found`,
-                },
+                ValidationError(
+                  `path:${param} must be unique. Duplicate values found`,
+                ),
               ],
             };
           }
@@ -1000,17 +934,16 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
   ): ValidationResponse => {
     let isValid = false;
     let parsed = value;
-    let message = { name: "", text: "" };
+    let message = EMPTY_ERROR_MESSAGE;
 
     if (_.isNil(value) || value === "") {
       parsed = config.params?.default;
 
       if (config.params?.required) {
         isValid = false;
-        message = {
-          name: "TypeError",
-          text: `Value does not match: ${getExpectedType(config)}`,
-        };
+        message = new TypeError(
+          `Value does not match: ${getExpectedType(config)}`,
+        );
       } else {
         isValid = true;
       }
@@ -1033,18 +966,16 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
         parsed = moment(value).toISOString(true);
       } else {
         isValid = false;
-        message = {
-          name: "TypeError",
-          text: `Value does not match: ${getExpectedType(config)}`,
-        };
+        message = new TypeError(
+          `Value does not match: ${getExpectedType(config)}`,
+        );
         parsed = config.params?.default;
       }
     } else {
       isValid = false;
-      message = {
-        name: "TypeError",
-        text: `Value does not match: ${getExpectedType(config)}`,
-      };
+      message = new TypeError(
+        `Value does not match: ${getExpectedType(config)}`,
+      );
     }
 
     const result: ValidationResponse = {
@@ -1067,7 +998,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
     const invalidResponse = {
       isValid: false,
       parsed: undefined,
-      messages: [{ name: "ValidationError", text: "Failed to validate" }],
+      messages: [ValidationError("Failed to validate")],
     };
     if (config.params?.fnString && isString(config.params?.fnString)) {
       try {
@@ -1095,10 +1026,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       isValid: false,
       parsed: config.params?.default || "",
       messages: [
-        {
-          name: "TypeError",
-          text: `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
-        },
+        new TypeError(
+          `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
+        ),
       ],
     };
     const base64Regex = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
@@ -1136,10 +1066,9 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       isValid: false,
       parsed: config?.params?.default || "",
       messages: [
-        {
-          name: "TypeError",
-          text: `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
-        },
+        new TypeError(
+          `${WIDGET_TYPE_VALIDATION_ERROR}: ${getExpectedType(config)}`,
+        ),
       ],
     };
 
@@ -1174,7 +1103,7 @@ export const VALIDATORS: Record<ValidationTypes, Validator> = {
       return {
         isValid: false,
         parsed: undefined,
-        messages: [{ name: "ValidationError", text: "Invalid validation" }],
+        messages: [ValidationError("Invalid validation")],
       };
 
     // Validate when JS mode is disabled

@@ -1,5 +1,4 @@
 import { EXECUTION_PARAM_KEY } from "constants/AppsmithActionConstants/ActionConstants";
-import { ErrorMessage } from "utils/DynamicBindingUtils";
 import { ValidationConfig } from "./PropertyControlConstants";
 
 // Always add a validator function in ./worker/validation for these types
@@ -19,10 +18,16 @@ export enum ValidationTypes {
   ARRAY_OF_TYPE_OR_TYPE = "ARRAY_OF_TYPE_OR_TYPE",
 }
 
+export const EMPTY_ERROR_MESSAGE = { name: "", message: "" };
+
+export const ValidationError = (message = "") => {
+  return { name: "ValidationError", message: message };
+};
+
 export type ValidationResponse = {
   isValid: boolean;
   parsed: any;
-  messages?: ErrorMessage[];
+  messages?: Error[];
   transformed?: any;
 };
 

@@ -5,6 +5,8 @@ import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import SelectComponent from "../component";
 import { DropdownOption } from "../constants";
 import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -33,7 +35,7 @@ export function defaultOptionValueValidation(
 ): ValidationResponse {
   let isValid;
   let parsed;
-  let message = { name: "", text: "" };
+  let message = EMPTY_ERROR_MESSAGE;
   const isServerSideFiltered = props.serverSideFiltering;
   // TODO: validation of defaultOption is dependent on serverSideFiltering and options, this property should reValidated once the dependencies change
   //this issue is been tracked here https://github.com/appsmithorg/appsmith/issues/15303
@@ -72,11 +74,9 @@ export function defaultOptionValueValidation(
   } else {
     isValid = false;
     parsed = undefined;
-    message = {
-      name: "TypeError",
-      text:
-        'value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }',
-    };
+    message = new TypeError(
+      'value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }',
+    );
   }
 
   if (isValid && !_.isNil(parsed) && parsed !== "") {
@@ -103,17 +103,15 @@ export function defaultOptionValueValidation(
     if (valueIndex === -1) {
       if (!isServerSideFiltered) {
         isValid = false;
-        message = {
-          name: "ValidationError",
-          text: `Default value is missing in options. Please update the value.`,
-        };
+        message = ValidationError(
+          `Default value is missing in options. Please update the value.`,
+        );
       } else {
         if (!hasLabelValue(parsed)) {
           isValid = false;
-          message = {
-            name: "ValidationError",
-            text: `Default value is missing in options. Please use {label : <string | num>, value : < string | num>} format to show default for server side data.`,
-          };
+          message = ValidationError(
+            `Default value is missing in options. Please use {label : <string | num>, value : < string | num>} format to show default for server side data.`,
+          );
         }
       }
     }

@@ -1,3 +1,7 @@
+import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
+} from "constants/WidgetValidation";
 import _ from "lodash";
 
 import { JSONFormWidgetProps } from "../..";
@@ -9,7 +13,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -26,7 +30,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: null,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -43,7 +47,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -60,7 +64,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: ["green", "red"],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -77,7 +81,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: ["green", "red"],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -94,7 +98,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: ["green", "red"],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -130,7 +134,7 @@ describe(".defaultOptionValueValidation", () => {
           value: "red",
         },
       ],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -150,11 +154,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "TypeError",
-              text:
-                "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-            },
+            new TypeError(
+              "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+            ),
           ],
         },
       ],
@@ -164,11 +166,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "TypeError",
-              text:
-                "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-            },
+            new TypeError(
+              "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+            ),
           ],
         },
       ],
@@ -178,11 +178,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "TypeError",
-              text:
-                "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-            },
+            new TypeError(
+              "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+            ),
           ],
         },
       ],
@@ -192,11 +190,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "TypeError",
-              text:
-                "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-            },
+            new TypeError(
+              "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+            ),
           ],
         },
       ],
@@ -206,10 +202,7 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "ValidationError",
-              text: "value must be unique. Duplicate values found",
-            },
+            ValidationError("value must be unique. Duplicate values found"),
           ],
         },
       ],
@@ -228,10 +221,7 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "ValidationError",
-              text: "value must be unique. Duplicate values found",
-            },
+            ValidationError("value must be unique. Duplicate values found"),
           ],
         },
       ],
@@ -248,11 +238,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "TypeError",
-              text:
-                "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-            },
+            new TypeError(
+              "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+            ),
           ],
         },
       ],
@@ -268,11 +256,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "TypeError",
-              text:
-                "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-            },
+            new TypeError(
+              "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+            ),
           ],
         },
       ],

@@ -1,3 +1,7 @@
+import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
+} from "constants/WidgetValidation";
 import _ from "lodash";
 import { defaultOptionValueValidation, MultiSelectWidgetProps } from ".";
 
@@ -16,21 +20,15 @@ const props = {
   ],
 };
 
-const DEFAULT_ERROR_MESSAGE = {
-  name: "TypeError",
-  text:
-    "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-};
-const MISSING_FROM_OPTIONS = {
-  name: "ValidationError",
-  text:
-    "Some or all default values are missing from options. Please update the values.",
-};
-const MISSING_FROM_OPTIONS_AND_WRONG_FORMAT = {
-  name: "ValidationError",
-  text:
-    "Default value is missing in options. Please use [{label : <string | num>, value : < string | num>}] format to show default for server side data",
-};
+const DEFAULT_ERROR_MESSAGE = new TypeError(
+  "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+);
+const MISSING_FROM_OPTIONS = ValidationError(
+  "Some or all default values are missing from options. Please update the values.",
+);
+const MISSING_FROM_OPTIONS_AND_WRONG_FORMAT = ValidationError(
+  "Default value is missing in options. Please use [{label : <string | num>, value : < string | num>}] format to show default for server side data",
+);
 
 describe("defaultOptionValueValidation - ", () => {
   it("should get tested with empty string", () => {
@@ -45,7 +43,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: [],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -96,7 +94,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: [input],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
   it("should get tested with a string", () => {
@@ -112,7 +110,7 @@ describe("defaultOptionValueValidation - ", () => {
       ).toEqual({
         isValid: true,
         parsed: [input],
-        messages: [{ name: "", text: "" }],
+        messages: [EMPTY_ERROR_MESSAGE],
       });
     });
   });
@@ -129,7 +127,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: ["GREEN", "RED"],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -163,7 +161,7 @@ describe("defaultOptionValueValidation - ", () => {
           value: "RED",
         },
       ],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -180,7 +178,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: ["GREEN", "RED"],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
     expect(
       defaultOptionValueValidation(
@@ -191,7 +189,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: ["1", "2"],
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -317,10 +315,7 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "ValidationError",
-              text: "values must be unique. Duplicate values found",
-            },
+            ValidationError("values must be unique. Duplicate values found"),
           ],
         },
       ],
@@ -339,10 +334,9 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: [],
           messages: [
-            {
-              name: "ValidationError",
-              text: "path:value must be unique. Duplicate values found",
-            },
+            ValidationError(
+              "path:value must be unique. Duplicate values found",
+            ),
           ],
         },
       ],

@@ -1,3 +1,4 @@
+import { ValidationError } from "constants/WidgetValidation";
 import { DataTree } from "entities/DataTree/dataTreeFactory";
 import { errorModifier } from "../errorModifier";
 
@@ -130,44 +131,38 @@ describe("Test error modifier", () => {
     error.name = "TypeError";
     error.message = "Api2.run is not a function";
     const result = errorModifier.run(error);
-    expect(result).toEqual({
-      name: "ValidationError",
-      text:
+    expect(result).toEqual(
+      ValidationError(
         "Found a reference to Api2.run() during evaluation. Sync fields cannot execute framework actions. Please remove any direct/indirect references to Api2.run() and try again.",
-    });
+      ),
+    );
   });
 
   it("TypeError for undefined Api in sync field ", () => {
-    const error = new Error();
-    error.name = "TypeError";
-    error.message = "Api1.run is not a function";
+    const error = new TypeError("Api1.run is not a function");
     const result = errorModifier.run(error);
     expect(result).toEqual({
-      name: "TypeError",
-      text: "Api1.run is not a function",
+      name: error.name,
+      message: error.message,
     });
   });
 
   it("ReferenceError for platform function in sync field", () => {
-    const error = new Error();
-    error.name = "ReferenceError";
-    error.message = "storeValue is not defined";
+    const error = new ReferenceError("storeValue is not defined");
     const result = errorModifier.run(error);
-    expect(result).toEqual({
-      name: "ValidationError",
-      text:
+    expect(result).toEqual(
+      ValidationError(
         "Found a reference to storeValue() during evaluation. Sync fields cannot execute framework actions. Please remove any direct/indirect references to storeValue() and try again.",
-    });
+      ),
+    );
   });
 
   it("ReferenceError for undefined function in sync field", () => {
-    const error = new Error();
-    error.name = "ReferenceError";
-    error.message = "storeValue2 is not defined";
+    const error = new ReferenceError("storeValue2 is not defined");
     const result = errorModifier.run(error);
     expect(result).toEqual({
       name: error.name,
-      text: error.message,
+      message: error.message,
     });
   });
 });

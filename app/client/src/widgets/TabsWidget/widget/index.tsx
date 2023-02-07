@@ -4,6 +4,7 @@ import TabsComponent from "../component";
 import BaseWidget, { WidgetState } from "../../BaseWidget";
 import WidgetFactory from "utils/WidgetFactory";
 import {
+  ValidationError,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -28,9 +29,7 @@ export function selectedTabValidation(
   return {
     isValid: value === "" ? true : tabNames.includes(value as string),
     parsed: value,
-    messages: [
-      { name: "ValidationError", text: `Tab name ${value} does not exist` },
-    ],
+    messages: [ValidationError(`Tab name ${value} does not exist`)],
   };
 }
 class TabsWidget extends BaseWidget<

@@ -11,6 +11,7 @@ import {
 import {
   ValidationTypes,
   ValidationResponse,
+  EMPTY_ERROR_MESSAGE,
 } from "constants/WidgetValidation";
 import {
   createMessage,
@@ -51,7 +52,7 @@ export function defaultValueValidation(
         return {
           isValid: true,
           parsed: undefined,
-          messages: [{ name: "", text: "" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         };
       }
 
@@ -59,9 +60,7 @@ export function defaultValueValidation(
         return {
           isValid: false,
           parsed: undefined,
-          messages: [
-            { name: "TypeError", text: "This value must be a number" },
-          ],
+          messages: [new TypeError("This value must be a number")],
         };
       }
     }
@@ -73,14 +72,14 @@ export function defaultValueValidation(
     return {
       isValid: true,
       parsed,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
   if (_.isObject(value)) {
     return {
       isValid: false,
       parsed: JSON.stringify(value, null, 2),
-      messages: [{ name: "TypeError", text: "This value must be string" }],
+      messages: [new TypeError("This value must be string")],
     };
   }
   let parsed = value;
@@ -92,14 +91,14 @@ export function defaultValueValidation(
       return {
         isValid: false,
         parsed: "",
-        messages: [{ name: "TypeError", text: "This value must be string" }],
+        messages: [new TypeError("This value must be string")],
       };
     }
   }
   return {
     isValid,
     parsed: parsed,
-    messages: [{ name: "", text: "" }],
+    messages: [EMPTY_ERROR_MESSAGE],
   };
 }
 

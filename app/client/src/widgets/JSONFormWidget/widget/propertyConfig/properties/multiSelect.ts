@@ -7,6 +7,8 @@ import {
 } from "../helper";
 import { MultiSelectFieldProps } from "widgets/JSONFormWidget/fields/MultiSelectField";
 import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -18,15 +20,12 @@ export function defaultOptionValueValidation(
   props: JSONFormWidgetProps,
   _: any,
 ): ValidationResponse {
-  const DEFAULT_ERROR_MESSAGE = {
-    name: "TypeError",
-    text:
-      "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
-  };
-  const UNIQUE_ERROR_MESSAGE = {
-    name: "ValidationError",
-    text: "value must be unique. Duplicate values found",
-  };
+  const DEFAULT_ERROR_MESSAGE = new TypeError(
+    "value should match: Array<string | number> | Array<{label: string, value: string | number}>",
+  );
+  const UNIQUE_ERROR_MESSAGE = ValidationError(
+    "value must be unique. Duplicate values found",
+  );
 
   const hasUniqueValues = (arr: unknown[]) => {
     const uniqueValues = new Set(arr);
@@ -70,7 +69,7 @@ export function defaultOptionValueValidation(
     return {
       isValid: true,
       parsed,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 
@@ -121,7 +120,7 @@ export function defaultOptionValueValidation(
   return {
     isValid: true,
     parsed: values,
-    messages: [{ name: "", text: "" }],
+    messages: [EMPTY_ERROR_MESSAGE],
   };
 }
 

@@ -1,3 +1,7 @@
+import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
+} from "constants/WidgetValidation";
 import _ from "lodash";
 import { SelectWidgetProps, defaultOptionValueValidation } from ".";
 
@@ -10,7 +14,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: "",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
   it("should get tested with number", () => {
@@ -20,7 +24,7 @@ describe("defaultOptionValueValidation - ", () => {
         {
           isValid: true,
           parsed: "1",
-          messages: [{ name: "", text: "" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         },
       ],
       [
@@ -28,7 +32,7 @@ describe("defaultOptionValueValidation - ", () => {
         {
           isValid: true,
           parsed: 1,
-          messages: [{ name: "", text: "" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         },
       ],
     ];
@@ -65,7 +69,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: "green",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -86,7 +90,7 @@ describe("defaultOptionValueValidation - ", () => {
     ).toEqual({
       isValid: true,
       parsed: "green",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -111,7 +115,7 @@ describe("defaultOptionValueValidation - ", () => {
         label: "green",
         value: "green",
       },
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
   it("should get tested with valid strings", () => {
@@ -121,7 +125,7 @@ describe("defaultOptionValueValidation - ", () => {
         {
           isValid: true,
           parsed: "undefined",
-          messages: [{ name: "", text: "" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         },
       ],
       [
@@ -129,7 +133,7 @@ describe("defaultOptionValueValidation - ", () => {
         {
           isValid: true,
           parsed: "null",
-          messages: [{ name: "", text: "" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         },
       ],
       [
@@ -137,7 +141,7 @@ describe("defaultOptionValueValidation - ", () => {
         {
           isValid: true,
           parsed: "true",
-          messages: [{ name: "", text: "" }],
+          messages: [EMPTY_ERROR_MESSAGE],
         },
       ],
     ];
@@ -168,10 +172,9 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: undefined,
           messages: [
-            {
-              name: "TypeError",
-              text: `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
-            },
+            new TypeError(
+              `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
+            ),
           ],
         },
       ],
@@ -181,10 +184,9 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: undefined,
           messages: [
-            {
-              name: "TypeError",
-              text: `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
-            },
+            new TypeError(
+              `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
+            ),
           ],
         },
       ],
@@ -194,10 +196,9 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: undefined,
           messages: [
-            {
-              name: "TypeError",
-              text: `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
-            },
+            new TypeError(
+              `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
+            ),
           ],
         },
       ],
@@ -207,10 +208,9 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: undefined,
           messages: [
-            {
-              name: "TypeError",
-              text: `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
-            },
+            new TypeError(
+              `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
+            ),
           ],
         },
       ],
@@ -222,10 +222,9 @@ describe("defaultOptionValueValidation - ", () => {
           isValid: false,
           parsed: undefined,
           messages: [
-            {
-              name: "TypeError",
-              text: `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
-            },
+            new TypeError(
+              `value does not evaluate to type: string | number | { "label": "label1", "value": "value1" }`,
+            ),
           ],
         },
       ],
@@ -268,10 +267,9 @@ describe("defaultOptionValueValidation - ", () => {
       isValid: false,
       parsed: "YELLOW",
       messages: [
-        {
-          name: "ValidationError",
-          text: "Default value is missing in options. Please update the value.",
-        },
+        ValidationError(
+          "Default value is missing in options. Please update the value.",
+        ),
       ],
     });
   });
@@ -295,11 +293,9 @@ describe("defaultOptionValueValidation - ", () => {
       isValid: false,
       parsed: "YELLOW",
       messages: [
-        {
-          name: "ValidationError",
-          text:
-            "Default value is missing in options. Please use {label : <string | num>, value : < string | num>} format to show default for server side data.",
-        },
+        ValidationError(
+          "Default value is missing in options. Please use {label : <string | num>, value : < string | num>} format to show default for server side data.",
+        ),
       ],
     });
   });

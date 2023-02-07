@@ -1,5 +1,6 @@
 import { defaultValueValidation, PhoneInputWidgetProps } from "./index";
 import _ from "lodash";
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 
 describe("defaultValueValidation", () => {
   let result: any;
@@ -14,7 +15,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "0000000000",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -25,7 +26,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: false,
       parsed: JSON.stringify(value, null, 2),
-      messages: [{ name: "TypeError", text: "This value must be string" }],
+      messages: [new TypeError("This value must be string")],
     });
   });
 });

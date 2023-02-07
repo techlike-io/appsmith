@@ -7,6 +7,7 @@ import {
 import { JSONFormWidgetProps } from "../..";
 import { SelectFieldProps } from "widgets/JSONFormWidget/fields/SelectField";
 import {
+  EMPTY_ERROR_MESSAGE,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -18,11 +19,9 @@ export function defaultOptionValueValidation(
   props: JSONFormWidgetProps,
   _: any,
 ): ValidationResponse {
-  const DEFAULT_ERROR_MESSAGE = {
-    name: "TypeError",
-    text:
-      'value should match: string | { "label": "label1", "value": "value1" }',
-  };
+  const DEFAULT_ERROR_MESSAGE = new TypeError(
+    'value should match: string | { "label": "label1", "value": "value1" }',
+  );
   let value = inputValue;
 
   const hasLabelValueProperties = (
@@ -43,7 +42,7 @@ export function defaultOptionValueValidation(
     return {
       isValid: true,
       parsed: inputValue,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 
@@ -58,7 +57,7 @@ export function defaultOptionValueValidation(
     return {
       isValid: true,
       parsed: value,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 
@@ -67,7 +66,7 @@ export function defaultOptionValueValidation(
     return {
       isValid: true,
       parsed: value,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
   }
 

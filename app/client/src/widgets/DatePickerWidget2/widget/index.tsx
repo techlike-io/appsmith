@@ -4,7 +4,10 @@ import { TextSize, WidgetType } from "constants/WidgetConstants";
 import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import DatePickerComponent from "../component";
 
-import { ValidationTypes } from "constants/WidgetValidation";
+import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationTypes,
+} from "constants/WidgetValidation";
 import { DerivedPropertiesMap } from "utils/WidgetFactory";
 import { AutocompleteDataType } from "utils/autocomplete/CodemirrorTernService";
 
@@ -24,18 +27,8 @@ function allowedRange(value: any) {
     isValid: isValid,
     parsed: isValid ? Number(value) : 0,
     messages: isValid
-      ? [
-          {
-            name: "",
-            text: "",
-          },
-        ]
-      : [
-          {
-            name: "RangeError",
-            text: "Number should be between 0-6.",
-          },
-        ],
+      ? [EMPTY_ERROR_MESSAGE]
+      : [new RangeError("Number should be between 0-6.")],
   };
 }
 class DatePickerWidget extends BaseWidget<DatePickerWidget2Props, WidgetState> {

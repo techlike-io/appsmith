@@ -1,5 +1,6 @@
 import { defaultValueValidation, InputWidgetProps } from "./index";
 import _ from "lodash";
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 
 describe("#defaultValueValidation", () => {
   const defaultInputWidgetProps: InputWidgetProps = {
@@ -40,34 +41,24 @@ describe("#defaultValueValidation", () => {
     "abcd",
   ];
   const expectedOutputs = [
-    { isValid: true, parsed: undefined, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: undefined, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: 0, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: 123, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: -23, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: 0.000001, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: -23, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: 0, messages: [{ name: "", text: "" }] },
-    { isValid: true, parsed: 100, messages: [{ name: "", text: "" }] },
+    { isValid: true, parsed: undefined, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: undefined, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: 0, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: 123, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: -23, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: 0.000001, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: -23, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: 0, messages: [EMPTY_ERROR_MESSAGE] },
+    { isValid: true, parsed: 100, messages: [EMPTY_ERROR_MESSAGE] },
     {
       isValid: false,
       parsed: undefined,
-      messages: [
-        {
-          name: "TypeError",
-          text: "This value must be a number",
-        },
-      ],
+      messages: [new TypeError("This value must be a number")],
     },
     {
       isValid: false,
       parsed: undefined,
-      messages: [
-        {
-          name: "TypeError",
-          text: "This value must be a number",
-        },
-      ],
+      messages: [new TypeError("This value must be a number")],
     },
   ];
 
@@ -133,7 +124,7 @@ describe("#defaultValueValidation", () => {
     expect(response).toStrictEqual({
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 });

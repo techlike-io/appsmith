@@ -104,6 +104,7 @@ import {
   isMetaWidgetTemplate,
   isWidgetDefaultPropertyPath,
 } from "entities/DataTree/utils";
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 
 type SortedDependencies = Array<string>;
 export type EvalProps = {
@@ -1021,10 +1022,7 @@ export default class DataTreeEvaluator {
               {
                 raw: dynamicBinding,
                 errorType: PropertyEvaluationErrorType.PARSE,
-                errorMessage: {
-                  name: (error as Error).name,
-                  text: (error as Error).message,
-                },
+                errorMessage: error as Error,
                 severity: Severity.ERROR,
               },
             ],
@@ -1085,10 +1083,7 @@ export default class DataTreeEvaluator {
             errorType: PropertyEvaluationErrorType.PARSE,
             raw: js,
             severity: Severity.ERROR,
-            errorMessage: {
-              name: (error as Error).name,
-              text: (error as Error).message,
-            },
+            errorMessage: error as Error,
           },
         ],
       };
@@ -1201,7 +1196,7 @@ export default class DataTreeEvaluator {
           messages?.map((message) => {
             return {
               raw: unEvalPropertyValue,
-              errorMessage: message || { name: "", text: "" },
+              errorMessage: message || EMPTY_ERROR_MESSAGE,
               errorType: PropertyEvaluationErrorType.VALIDATION,
               severity: Severity.ERROR,
             };

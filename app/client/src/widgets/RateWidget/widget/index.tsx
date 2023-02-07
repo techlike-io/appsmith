@@ -4,7 +4,7 @@ import { WidgetType } from "constants/WidgetConstants";
 import { RateSize } from "../constants";
 import RateComponent from "../component";
 
-import { ValidationTypes } from "constants/WidgetValidation";
+import { ValidationError, ValidationTypes } from "constants/WidgetValidation";
 import { DerivedPropertiesMap } from "utils/WidgetFactory";
 import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import { Stylesheet } from "entities/AppTheming";
@@ -30,7 +30,7 @@ function validateDefaultRate(value: unknown, props: any, _: any) {
         return {
           isValid: false,
           parsed: 0,
-          messages: [{ name: "TypeError", text: `Value must be a number` }],
+          messages: [new TypeError(`Value must be a number`)],
         };
       }
     }
@@ -45,10 +45,7 @@ function validateDefaultRate(value: unknown, props: any, _: any) {
         isValid: false,
         parsed,
         messages: [
-          {
-            name: "RangeError",
-            text: `This value must be less than or equal to max count`,
-          },
+          new RangeError(`This value must be less than or equal to max count`),
         ],
       };
     }
@@ -59,10 +56,9 @@ function validateDefaultRate(value: unknown, props: any, _: any) {
         isValid: false,
         parsed,
         messages: [
-          {
-            name: "ValidationError",
-            text: `This value can be a decimal only if 'Allow half' is true`,
-          },
+          ValidationError(
+            `This value can be a decimal only if 'Allow half' is true`,
+          ),
         ],
       };
     }
@@ -72,7 +68,7 @@ function validateDefaultRate(value: unknown, props: any, _: any) {
     return {
       isValid: false,
       parsed: value,
-      messages: [{ name: "ValidationError", text: `Could not validate ` }],
+      messages: [ValidationError(`Could not validate `)],
     };
   }
 }

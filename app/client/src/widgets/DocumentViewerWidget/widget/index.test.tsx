@@ -1,3 +1,7 @@
+import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
+} from "constants/WidgetValidation";
 import { documentUrlValidation } from ".";
 
 describe("validate propertypane input : docUrl", () => {
@@ -6,7 +10,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected1 = {
       isValid: true,
       parsed: "",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const result = documentUrlValidation(input1);
@@ -16,9 +20,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected2 = {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Provided URL / Base64 is invalid." },
-      ],
+      messages: [ValidationError("Provided URL / Base64 is invalid.")],
     };
 
     const result1 = documentUrlValidation(input2);
@@ -28,9 +30,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected3 = {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Provided URL / Base64 is invalid." },
-      ],
+      messages: [ValidationError("Provided URL / Base64 is invalid.")],
     };
 
     const result2 = documentUrlValidation(input3);
@@ -40,9 +40,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected4 = {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Provided URL / Base64 is invalid." },
-      ],
+      messages: [ValidationError("Provided URL / Base64 is invalid.")],
     };
 
     const result3 = documentUrlValidation(input4);
@@ -52,9 +50,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected6 = {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Provided URL / Base64 is invalid." },
-      ],
+      messages: [ValidationError("Provided URL / Base64 is invalid.")],
     };
 
     const result5 = documentUrlValidation(input6);
@@ -66,9 +62,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected1 = {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Provided URL / Base64 is invalid." },
-      ],
+      messages: [ValidationError("Provided URL / Base64 is invalid.")],
     };
 
     const result1 = documentUrlValidation(input1);
@@ -78,9 +72,7 @@ describe("validate propertypane input : docUrl", () => {
     const expected2 = {
       isValid: false,
       parsed: "",
-      messages: [
-        { name: "ValidationError", text: "Provided URL / Base64 is invalid." },
-      ],
+      messages: [ValidationError("Provided URL / Base64 is invalid.")],
     };
 
     const result2 = documentUrlValidation(input2);

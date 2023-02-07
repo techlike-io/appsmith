@@ -1,5 +1,8 @@
 import { ValidationConfig } from "constants/PropertyControlConstants";
-import { ValidationResponse } from "constants/WidgetValidation";
+import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationResponse,
+} from "constants/WidgetValidation";
 import { MenuButtonWidgetProps } from "./constants";
 
 /**
@@ -15,12 +18,7 @@ export function sourceDataArrayValidation(
   const invalidResponse = {
     isValid: false,
     parsed: [],
-    messages: [
-      {
-        name: "TypeError",
-        text: "This value does not evaluate to type Array",
-      },
-    ],
+    messages: [new TypeError("This value does not evaluate to type Array")],
   };
 
   try {
@@ -30,14 +28,11 @@ export function sourceDataArrayValidation(
 
     if (Array.isArray(options)) {
       let isValid = true;
-      let message = { name: "", text: "" };
+      let message = EMPTY_ERROR_MESSAGE;
 
       if (options.length > 10) {
         isValid = false;
-        message = {
-          name: "RangeError",
-          text: "Source data cannot have more than 10 items",
-        };
+        message = new RangeError("Source data cannot have more than 10 items");
       }
 
       return {
@@ -60,7 +55,7 @@ export function textForEachRowValidation(
 ): ValidationResponse {
   const generateResponseAndReturn = (
     isValid = false,
-    message = { name: "", text: "" },
+    message = EMPTY_ERROR_MESSAGE,
   ) => {
     return {
       isValid,
@@ -69,10 +64,9 @@ export function textForEachRowValidation(
     };
   };
 
-  const DEFAULT_MESSAGE = {
-    name: "TypeError",
-    text: "The evaluated value should be either a string or a number.",
-  };
+  const DEFAULT_MESSAGE = new TypeError(
+    "The evaluated value should be either a string or a number.",
+  );
 
   if (
     _.isString(value) ||
@@ -114,7 +108,7 @@ export function booleanForEachRowValidation(
 ): ValidationResponse {
   const generateResponseAndReturn = (
     isValid = false,
-    message = { name: "", text: "" },
+    message = EMPTY_ERROR_MESSAGE,
   ) => {
     return {
       isValid,
@@ -130,10 +124,9 @@ export function booleanForEachRowValidation(
     return isABoolean || isStringTrueFalse || value === undefined;
   };
 
-  const DEFAULT_MESSAGE = {
-    name: "TypeError",
-    text: "The evaluated value should be a boolean.",
-  };
+  const DEFAULT_MESSAGE = new TypeError(
+    "The evaluated value should be a boolean.",
+  );
 
   if (isBoolean(value)) {
     return generateResponseAndReturn(true);
@@ -170,7 +163,7 @@ export function iconNamesForEachRowValidation(
 ): ValidationResponse {
   const generateResponseAndReturn = (
     isValid = false,
-    message = { name: "", text: "" },
+    message = EMPTY_ERROR_MESSAGE,
   ) => {
     return {
       isValid,
@@ -179,11 +172,9 @@ export function iconNamesForEachRowValidation(
     };
   };
 
-  const DEFAULT_MESSAGE = {
-    name: "TypeError",
-    text:
-      "The evaluated value should either be an icon name, undefined, null, or an empty string. We currently use the icons from the Blueprint library. You can see the list of icons at https://blueprintjs.com/docs/#icons",
-  };
+  const DEFAULT_MESSAGE = new TypeError(
+    "The evaluated value should either be an icon name, undefined, null, or an empty string. We currently use the icons from the Blueprint library. You can see the list of icons at https://blueprintjs.com/docs/#icons",
+  );
 
   const isIconName = (value: unknown) => {
     return (
@@ -229,7 +220,7 @@ export function iconPositionForEachRowValidation(
 ): ValidationResponse {
   const generateResponseAndReturn = (
     isValid = false,
-    message = { name: "", text: "" },
+    message = EMPTY_ERROR_MESSAGE,
   ) => {
     return {
       isValid,
@@ -238,12 +229,11 @@ export function iconPositionForEachRowValidation(
     };
   };
 
-  const DEFAULT_MESSAGE = {
-    name: "TypeError",
-    text: `The evaluated value should be one of the allowed values => ${config?.params?.allowedValues?.join(
+  const DEFAULT_MESSAGE = new TypeError(
+    `The evaluated value should be one of the allowed values => ${config?.params?.allowedValues?.join(
       ", ",
     )}, undefined, null, or an empty string`,
-  };
+  );
 
   const isIconPosition = (value: unknown) => {
     return (
@@ -289,7 +279,7 @@ export function colorForEachRowValidation(
 ): ValidationResponse {
   const generateResponseAndReturn = (
     isValid = false,
-    message = { name: "", text: "" },
+    message = EMPTY_ERROR_MESSAGE,
   ) => {
     return {
       isValid,
@@ -298,10 +288,9 @@ export function colorForEachRowValidation(
     };
   };
 
-  const DEFAULT_MESSAGE = {
-    name: "TypeError",
-    text: `The evaluated value should match ${config?.params?.regex}`,
-  };
+  const DEFAULT_MESSAGE = new TypeError(
+    `The evaluated value should match ${config?.params?.regex}`,
+  );
 
   const isColor = (value: unknown) => {
     return config?.params?.regex?.test(value as string);

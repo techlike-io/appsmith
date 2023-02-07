@@ -5,6 +5,7 @@ import {
   maxValueValidation,
 } from "./index";
 import _ from "lodash";
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 
 describe("defaultValueValidation", () => {
   let result: any;
@@ -19,7 +20,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "text",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
 
     result = defaultValueValidation(
@@ -31,7 +32,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "1",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -45,7 +46,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: 1,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
 
     result = defaultValueValidation(
@@ -57,7 +58,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: false,
       parsed: null,
-      messages: [{ name: "TypeError", text: "This value must be number" }],
+      messages: [new TypeError("This value must be number")],
     });
   });
 
@@ -71,7 +72,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "test@appsmith.com",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
 
     result = defaultValueValidation(
@@ -83,7 +84,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "1",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -97,7 +98,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "admin123",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
 
     result = defaultValueValidation(
@@ -109,7 +110,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "1",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -123,7 +124,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: false,
       parsed: "",
-      messages: [{ name: "TypeError", text: "This value must be string" }],
+      messages: [new TypeError("This value must be string")],
     });
   });
 
@@ -138,7 +139,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: false,
       parsed: JSON.stringify(value, null, 2),
-      messages: [{ name: "TypeError", text: "This value must be string" }],
+      messages: [new TypeError("This value must be string")],
     });
   });
 });

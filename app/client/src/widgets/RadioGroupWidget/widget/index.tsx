@@ -12,6 +12,8 @@ import { LabelPosition } from "components/constants";
 import RadioGroupComponent from "../component";
 import { Stylesheet } from "entities/AppTheming";
 import {
+  EMPTY_ERROR_MESSAGE,
+  ValidationError,
   ValidationResponse,
   ValidationTypes,
 } from "constants/WidgetValidation";
@@ -33,7 +35,7 @@ export function optionsCustomValidation(
     _: any,
   ) => {
     let _isValid = true;
-    let message = { name: "", text: "" };
+    let message = EMPTY_ERROR_MESSAGE;
     let valueType = "";
     const uniqueLabels: Record<string | number, string> = {};
 
@@ -47,21 +49,18 @@ export function optionsCustomValidation(
         uniqueLabels[value] = "";
       } else {
         _isValid = false;
-        message = {
-          name: "ValidationError",
-          text: "path:value must be unique. Duplicate values found",
-        };
+        message = ValidationError(
+          "path:value must be unique. Duplicate values found",
+        );
         break;
       }
 
       //Check if the required field "label" is present:
       if (!label) {
         _isValid = false;
-        message = {
-          name: "ValidationError",
-          text:
-            "Invalid entry at index: " + i + ". Missing required key: label",
-        };
+        message = ValidationError(
+          "Invalid entry at index: " + i + ". Missing required key: label",
+        );
         break;
       }
 
@@ -72,34 +71,29 @@ export function optionsCustomValidation(
         (typeof label !== "string" && typeof label !== "number")
       ) {
         _isValid = false;
-        message = {
-          name: "ValidationError",
-          text:
-            "Invalid entry at index: " +
+        message = ValidationError(
+          "Invalid entry at index: " +
             i +
             ". Value of key: label is invalid: This value does not evaluate to type string",
-        };
+        );
         break;
       }
 
       //Check if all the data types for the value prop is the same.
       if (typeof value !== valueType) {
         _isValid = false;
-        message = {
-          name: "TypeError",
-          text: "All value properties in options must have the same type",
-        };
+        message = new TypeError(
+          "All value properties in options must have the same type",
+        );
         break;
       }
 
       //Check if the each object has value property.
       if (_.isNil(value)) {
         _isValid = false;
-        message = {
-          name: "TypeError",
-          text:
-            'This value does not evaluate to type Array<{ "label": "string", "value": "string" | number }>',
-        };
+        message = new TypeError(
+          'This value does not evaluate to type Array<{ "label": "string", "value": "string" | number }>',
+        );
         break;
       }
     }
@@ -115,11 +109,9 @@ export function optionsCustomValidation(
     isValid: false,
     parsed: [],
     messages: [
-      {
-        name: "TypeError",
-        text:
-          'This value does not evaluate to type Array<{ "label": "string", "value": "string" | number }>',
-      },
+      new TypeError(
+        'This value does not evaluate to type Array<{ "label": "string", "value": "string" | number }>',
+      ),
     ],
   };
   try {
@@ -147,10 +139,7 @@ function defaultOptionValidation(
       isValid: false,
       parsed: JSON.stringify(value, null, 2),
       messages: [
-        {
-          name: "TypeError",
-          text: "This value does not evaluate to type: string or number",
-        },
+        new TypeError("This value does not evaluate to type: string or number"),
       ],
     };
   }
@@ -161,10 +150,7 @@ function defaultOptionValidation(
       isValid: false,
       parsed: value,
       messages: [
-        {
-          name: "TypeError",
-          text: "This value does not evaluate to type: string or number",
-        },
+        new TypeError("This value does not evaluate to type: string or number"),
       ],
     };
   }

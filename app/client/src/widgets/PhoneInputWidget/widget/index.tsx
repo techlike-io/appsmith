@@ -6,6 +6,7 @@ import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import {
   ValidationTypes,
   ValidationResponse,
+  EMPTY_ERROR_MESSAGE,
 } from "constants/WidgetValidation";
 import {
   createMessage,
@@ -38,11 +39,7 @@ export function defaultValueValidation(
   props: PhoneInputWidgetProps,
   _?: any,
 ): ValidationResponse {
-  const STRING_ERROR_MESSAGE = {
-    name: "TypeError",
-    text: "This value must be string",
-  };
-  const EMPTY_ERROR_MESSAGE = { name: "", text: "" };
+  const STRING_ERROR_MESSAGE = new TypeError("This value must be string");
   if (_.isObject(value)) {
     return {
       isValid: false,

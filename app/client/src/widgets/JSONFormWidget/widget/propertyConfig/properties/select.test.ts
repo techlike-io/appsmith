@@ -1,3 +1,4 @@
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 import _ from "lodash";
 
 import { JSONFormWidgetProps } from "../..";
@@ -9,7 +10,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -26,7 +27,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: null,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -43,7 +44,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: "",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -60,7 +61,7 @@ describe(".defaultOptionValueValidation", () => {
     const expectedOutput = {
       isValid: true,
       parsed: "green",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -86,7 +87,7 @@ describe(".defaultOptionValueValidation", () => {
         label: "green",
         value: "green",
       },
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     };
 
     const response = defaultOptionValueValidation(
@@ -106,11 +107,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],
@@ -120,11 +119,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],
@@ -140,11 +137,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],
@@ -156,11 +151,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],
@@ -172,11 +165,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],
@@ -186,11 +177,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],
@@ -200,11 +189,9 @@ describe(".defaultOptionValueValidation", () => {
           isValid: false,
           parsed: {},
           messages: [
-            {
-              name: "TypeError",
-              text:
-                'value should match: string | { "label": "label1", "value": "value1" }',
-            },
+            new TypeError(
+              'value should match: string | { "label": "label1", "value": "value1" }',
+            ),
           ],
         },
       ],

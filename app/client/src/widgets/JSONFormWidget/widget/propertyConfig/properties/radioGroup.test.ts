@@ -1,3 +1,4 @@
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 import _ from "lodash";
 
 import { JSONFormWidgetProps } from "../..";
@@ -24,7 +25,7 @@ describe(".optionsValidation", () => {
       messages: [
         {
           name: "ValidationError",
-          text: "path:value must be unique. Duplicate values found",
+          message: "path:value must be unique. Duplicate values found",
         },
       ],
     };
@@ -43,7 +44,7 @@ describe(".optionsValidation", () => {
       messages: [
         {
           name: "ValidationError",
-          text: "Invalid entry at index: 0. Missing required key: label",
+          message: "Invalid entry at index: 0. Missing required key: label",
         },
       ],
     };
@@ -62,10 +63,9 @@ describe(".optionsValidation", () => {
       isValid: false,
       parsed: [],
       messages: [
-        {
-          name: "TypeError",
-          text: "All value properties in options must have the same type",
-        },
+        new TypeError(
+          "All value properties in options must have the same type",
+        ),
       ],
     };
 
@@ -90,11 +90,9 @@ describe(".optionsValidation", () => {
       isValid: false,
       parsed: [],
       messages: [
-        {
-          name: "TypeError",
-          text:
-            'This value does not evaluate to type Array<{ "label": "string", "value": "string" | number }>',
-        },
+        new TypeError(
+          'This value does not evaluate to type Array<{ "label": "string", "value": "string" | number }>',
+        ),
       ],
     };
 
@@ -122,7 +120,7 @@ describe(".optionsValidation", () => {
       const expectedOutput = {
         isValid: true,
         parsed: input,
-        messages: [{ name: "", text: "" }],
+        messages: [EMPTY_ERROR_MESSAGE],
       };
 
       expect(response).toEqual(expectedOutput);

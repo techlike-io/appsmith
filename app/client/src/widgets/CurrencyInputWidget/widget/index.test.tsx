@@ -1,5 +1,6 @@
 import { defaultValueValidation, CurrencyInputWidgetProps } from "./index";
 import _ from "lodash";
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 
 describe("defaultValueValidation", () => {
   let result: any;
@@ -10,7 +11,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: "100",
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
 
     result = defaultValueValidation("test", {} as CurrencyInputWidgetProps, _);
@@ -18,7 +19,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: false,
       parsed: undefined,
-      messages: [{ name: "TypeError", text: "This value must be number" }],
+      messages: [new TypeError("This value must be number")],
     });
 
     result = defaultValueValidation("", {} as CurrencyInputWidgetProps, _);
@@ -26,7 +27,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: true,
       parsed: undefined,
-      messages: [{ name: "", text: "" }],
+      messages: [EMPTY_ERROR_MESSAGE],
     });
   });
 
@@ -37,7 +38,7 @@ describe("defaultValueValidation", () => {
     expect(result).toEqual({
       isValid: false,
       parsed: JSON.stringify(value, null, 2),
-      messages: [{ name: "TypeError", text: "This value must be number" }],
+      messages: [new TypeError("This value must be number")],
     });
   });
 });

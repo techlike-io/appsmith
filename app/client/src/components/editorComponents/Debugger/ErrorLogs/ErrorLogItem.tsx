@@ -32,6 +32,7 @@ import { PluginErrorDetails } from "api/ActionAPI";
 import ContextualMenu from "../ContextualMenu";
 import LogEntityLink from "./components/LogEntityLink";
 import LogTimeStamp from "./components/LogTimeStamp";
+import { EMPTY_ERROR_MESSAGE } from "constants/WidgetValidation";
 
 const InnerWrapper = styled.div`
   display: flex;
@@ -266,7 +267,7 @@ function ErrorLogItem(props: LogItemProps) {
             >
               {props.pluginErrorDetails
                 ? props.pluginErrorDetails.title
-                : props.messages && props.messages[0].message.text}
+                : props.messages && props.messages[0].message.message}
             </span>
           </div>
         )}
@@ -281,11 +282,12 @@ function ErrorLogItem(props: LogItemProps) {
           />
         )}
         {props.category === LOG_CATEGORY.PLATFORM_GENERATED &&
-          props.severity === Severity.ERROR && (
+          props.severity === Severity.ERROR &&
+          props.logType !== LOG_TYPE.LINT_ERROR && (
             <ContextWrapper onClick={(e) => e.stopPropagation()}>
               <ContextualMenu
                 entity={props.source}
-                error={{ message: { name: "", text: "" } }}
+                error={{ message: EMPTY_ERROR_MESSAGE }}
               >
                 <TooltipComponent
                   content={
