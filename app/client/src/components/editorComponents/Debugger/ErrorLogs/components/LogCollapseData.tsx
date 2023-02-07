@@ -80,16 +80,18 @@ export default function LogCollapseData(props: any) {
           </MessageInfo>
           <MessageInfo>
             {props.pluginErrorDetails.downstreamErrorMessage && (
-              <LogAdditionalInfo
-                text={
-                  props.pluginErrorDetails.downstreamErrorCode
-                    ? props.pluginErrorDetails.downstreamErrorCode
-                    : "Downstream Error"
-                }
-                width="90px"
-              />
+              <>
+                <LogAdditionalInfo
+                  text={
+                    props.pluginErrorDetails.downstreamErrorCode
+                      ? props.pluginErrorDetails.downstreamErrorCode
+                      : "Downstream Error"
+                  }
+                  width="90px"
+                />
+                <span>{props.pluginErrorDetails.downstreamErrorMessage}</span>
+              </>
             )}
-            <span>{props.pluginErrorDetails.downstreamErrorMessage}</span>
           </MessageInfo>
         </MessageWrapper>
       )}
