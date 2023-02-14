@@ -130,6 +130,9 @@ import SwitchGroupWidget, {
 import SwitchWidget, {
   CONFIG as SWITCH_WIDGET_CONFIG,
 } from "widgets/SwitchWidget";
+import GanttWidget, {
+  CONFIG as GANTT_WIDGET_CONFIG,
+} from "widgets/GanttWidget";
 import TableWidget, {
   CONFIG as TABLE_WIDGET_CONFIG,
 } from "widgets/TableWidget";
@@ -180,6 +183,7 @@ export const ALL_WIDGETS_AND_CONFIG: [any, WidgetConfiguration][] = [
   [RichTextEditorWidget, RICH_TEXT_EDITOR_WIDGET_CONFIG],
   [DatePickerWidget2, DATE_PICKER_WIDGET_2_CONFIG],
   [SwitchWidget, SWITCH_WIDGET_CONFIG],
+  [GanttWidget, GANTT_WIDGET_CONFIG],
   [FormWidget, FORM_WIDGET_CONFIG],
   [ListWidget, LIST_WIDGET_CONFIG],
   [RateWidget, RATE_WIDGET_CONFIG],

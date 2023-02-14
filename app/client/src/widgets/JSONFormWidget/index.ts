@@ -4,6 +4,7 @@ import Widget, { JSONFormWidgetProps } from "./widget";
 import { ButtonVariantTypes } from "components/constants";
 import { BlueprintOperationTypes } from "widgets/constants";
 import { DynamicHeight } from "utils/WidgetFeatures";
+import { ViewMode } from "widgets/GanttWidget/types/public-types";
 
 const SUBMIT_BUTTON_DEFAULT_STYLES = {
   buttonVariant: ButtonVariantTypes.PRIMARY,
@@ -40,6 +41,7 @@ export const CONFIG = {
     version: 1,
     borderWidth: "1",
     borderColor: Colors.GREY_5,
+    viewMode: ViewMode.Day,
     widgetName: "JSONForm",
     autoGenerateForm: true,
     fieldLimitExceeded: false,
