@@ -44,7 +44,7 @@ jobs:
       - name: Get the version
         id: get_version
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
+          tag="$(date +%s)"
           echo "tag=$tag" >> $GITHUB_OUTPUT
           if [[ $tag == *"beta"* ]]; then
             echo "is_beta=true" >> $GITHUB_OUTPUT
@@ -93,6 +93,7 @@ jobs:
       - name: Create the bundle
         env:
           REACT_APP_ENVIRONMENT: "PRODUCTION"
+          CI: "" # Disable warnings as errors
           REACT_APP_FUSIONCHARTS_LICENSE_KEY: "${{ secrets.APPSMITH_FUSIONCHARTS_LICENSE_KEY }}"
           REACT_APP_SEGMENT_CE_KEY: "${{ secrets.APPSMITH_SEGMENT_CE_KEY }}"
           REACT_APP_VERSION_ID: "${{ needs.prelude.outputs.tag }}"
