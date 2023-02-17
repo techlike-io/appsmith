@@ -1,14 +1,14 @@
 name: Release Drafter
 
 on:
-  push:
-    branches:
-      - release
-    # Only trigger if files have changed in this specific path
-    paths:
-      - "app/client/**"
-      - "app/server/**"
-      - "app/rts/**"
+  # push:
+  #   branches:
+  #     - release
+  #   # Only trigger if files have changed in this specific path
+  #   paths:
+  #     - "app/client/**"
+  #     - "app/server/**"
+  #     - "app/rts/**"
 
   # pull_request event is required only for autolabeler
   # pull_request:

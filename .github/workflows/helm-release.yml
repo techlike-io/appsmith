@@ -3,13 +3,13 @@ name: Helm Charts Publish
 # Package & publish new version for Helm chart to S3 bucket.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "deploy/helm/**"
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - "deploy/helm/**"
 
-  workflow_dispatch:
+  # workflow_dispatch:
 
 jobs:
   publish:

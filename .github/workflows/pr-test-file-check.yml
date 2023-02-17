@@ -1,9 +1,9 @@
 name: Check for test files
 
 on:
-  pull_request:
-    branches: [ release ]
-    types: [ opened, reopened, edited ]
+  # pull_request:
+  #   branches: [ release ]
+  #   types: [ opened, reopened, edited ]
 
 jobs:
   build:
