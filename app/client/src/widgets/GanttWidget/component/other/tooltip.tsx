@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { Task } from "../../types/public-types";
 import { BarTask } from "../../types/bar-task";
 import styles from "./tooltip.module.css";
+import { calculateDuration } from "widgets/GanttWidget/helpers/date-helper";
 
 export type TooltipProps = {
   task: BarTask;
@@ -143,10 +144,7 @@ export const StandardTooltipContent: React.FC<{
       {task.end.getTime() - task.start.getTime() !== 0 && (
         <p
           className={styles.tooltipDefaultContainerParagraph}
-        >{`Czas trwania: ${~~(
-          (task.end.getTime() - task.start.getTime()) /
-          (1000 * 60 * 60 * 24)
-        )} dni`}</p>
+        >{`Czas trwania: ${calculateDuration(task.start, task.end)}`}</p>
       )}
 
       <p className={styles.tooltipDefaultContainerParagraph}>

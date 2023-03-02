@@ -39,6 +39,7 @@
   padding: 0.15rem 0.2rem 0rem 1rem;
   user-select: none;
   cursor: pointer;
+  display: none;
 }
 .taskListEmptyExpander {
   font-size: 0.6rem;

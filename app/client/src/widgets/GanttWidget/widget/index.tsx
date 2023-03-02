@@ -385,6 +385,7 @@ class GanttWidget extends BaseWidget<GanttWidgetProps, WidgetState> {
     return {
       isSwitchedOn: undefined,
       isDirty: false,
+      selectedTask: undefined,
     };
   }
 
@@ -403,16 +404,12 @@ class GanttWidget extends BaseWidget<GanttWidgetProps, WidgetState> {
     }
   }
 
-  onChange = (isSwitchedOn: boolean) => {
-    if (!this.props.isDirty) {
-      this.props.updateWidgetMetaProperty("isDirty", true);
-    }
-
-    this.props.updateWidgetMetaProperty("isSwitchedOn", isSwitchedOn, {
+  onChange = (task: Task) => {
+    this.props.updateWidgetMetaProperty("selectedTask", task, {
       triggerPropertyName: "onChange",
       dynamicString: this.props.onChange,
       event: {
-        type: EventType.ON_SWITCH_CHANGE,
+        type: EventType.ON_DATE_SELECTED,
       },
     });
   };

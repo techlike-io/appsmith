@@ -66,6 +66,10 @@ export const TaskListTableDefault: React.FC<{
           expanderSymbol = "▶";
         }
 
+        if (t.type === "group") {
+          expanderSymbol = "";
+        }
+
         let textClassName = "";
 
         if (t.type === "task") {
@@ -94,17 +98,12 @@ export const TaskListTableDefault: React.FC<{
               }}
               title={t.name}
             >
-              <div
-                className={styles.taskListNameWrapper}
-                onClick={() => {
-                  console.log("");
-                }}
-              >
+              <div className={styles.taskListNameWrapper}>
                 <div
                   className={
                     expanderSymbol
                       ? t.type === "group"
-                        ? styles.groupListExpander
+                        ? styles.taskListEmptyExpander
                         : styles.taskListExpander
                       : styles.taskListEmptyExpander
                   }

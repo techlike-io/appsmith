@@ -18,7 +18,7 @@ export interface GanttComponentProps extends ComponentProps {
   label: string;
   viewMode: ViewMode;
   isSwitchedOn: boolean;
-  onChange: (isSwitchedOn: boolean) => void;
+  onChange: (task: Task) => void;
   isLoading: boolean;
   alignWidget: AlignWidgetTypes;
   labelPosition: LabelPosition;
@@ -179,7 +179,37 @@ function GanttComponent({
     }
   };
 
-  console.log(isSectorVisible);
+  const ganttComponent = useMemo(() => {
+    return (
+      <GanttComponentContainer accentColor={accentColor}>
+        {sourceData && sourceData.length > 0 && (
+          <Gantt
+            columnWidth={columnWidth}
+            ganttHeight={
+              document.getElementById("art-board")
+                ? undefined
+                : rootHeight
+                ? rootHeight - 250
+                : undefined
+            }
+            hideDependencies={!isDependencyVisible}
+            listCellWidth={"200px"}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            locale="pl"
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onClick={onChange}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onDateChange={() => {}}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onExpanderClick={handleExpanderClick}
+            rowHeight={40}
+            tasks={tasks}
+            viewMode={viewMode}
+          />
+        )}
+      </GanttComponentContainer>
+    );
+  }, [sourceData]);
 
   return (
     <GanttComponentContainer accentColor={accentColor}>
@@ -198,7 +228,9 @@ function GanttComponent({
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           locale="pl"
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onDateChange={() => {}}
+          onClick={() => {}}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onDateChange={onChange}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onExpanderClick={handleExpanderClick}
           rowHeight={40}
@@ -210,4 +242,4 @@ function GanttComponent({
   );
 }
 
-export default GanttComponent;
+export default React.memo(GanttComponent);

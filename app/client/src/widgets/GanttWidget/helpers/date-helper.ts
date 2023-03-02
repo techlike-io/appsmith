@@ -208,6 +208,28 @@ export const getLocalDayOfWeek = (
   return bottomValue;
 };
 
+export function calculateDuration(startDate: Date, endDate: Date): string {
+  const timeDifference = endDate.getTime() - startDate.getTime();
+  const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+  const days = Math.floor((hours - 8) / 24) + 1;
+
+  if (hours < 8) {
+    if (hours === 1) {
+      return `${hours} godzina`;
+    } else if (hours < 5) {
+      return `${hours} godziny`;
+    } else {
+      return `${hours} godzin`;
+    }
+  } else {
+    if (days === 1) {
+      return `${days} dzień`;
+    } else {
+      return `${days} dni`;
+    }
+  }
+}
+
 /**
  * Returns monday of current week
  * @param date date for modify
