@@ -1,5 +1,47 @@
 import { JSONFormWidgetProps } from "widgets/JSONFormWidget/widget";
 import { Task } from "../types/public-types";
+import moment from "moment";
+
+export function getDependentTaskIds(tasks: Task[], taskId: string): string[] {
+  const dependentTaskIds = new Set<string>();
+
+  const task = tasks.find((t) => t.id === taskId);
+  if (!task || !task.dependencies) {
+    return Array.from(dependentTaskIds);
+  }
+
+  if (task.type === "project") {
+    return tasks.filter((t) => t.project === task.id).map((t) => t.id);
+  }
+
+  task.dependencies.forEach((dependencyId) => {
+    const dependentTask = tasks.find((t) => t.id === dependencyId);
+    if (dependentTask) {
+      dependentTaskIds.add(dependencyId);
+      const dependentDependentTaskIds = getDependentTaskIds(
+        tasks,
+        dependencyId,
+      );
+      dependentDependentTaskIds.forEach((id) => dependentTaskIds.add(id));
+    }
+  });
+
+  return Array.from(dependentTaskIds);
+}
+
+export const calculateProgress = (task: Task) => {
+  // calculate progress as a moment in time between start date and end date in comparison to current date
+  const now = new Date();
+  const start = new Date(task.start);
+  const end = new Date(task.end);
+  const duration = end.getTime() - start.getTime();
+  const current = now.getTime() - start.getTime();
+
+  //return % capped at 0 or 100
+  if (current <= 0) return 0;
+  if (current >= duration) return 100;
+  return Math.round((current / duration) * 100);
+};
 
 export const taskValidationFn = (
   value: any,

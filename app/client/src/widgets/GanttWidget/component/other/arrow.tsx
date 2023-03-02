@@ -7,12 +7,14 @@ type ArrowProps = {
   rowHeight: number;
   taskHeight: number;
   arrowIndent: number;
+  showArrow: boolean;
   rtl: boolean;
 };
 export const Arrow: React.FC<ArrowProps> = ({
   arrowIndent,
   rowHeight,
   rtl,
+  showArrow,
   taskFrom,
   taskHeight,
   taskTo,
@@ -37,10 +39,18 @@ export const Arrow: React.FC<ArrowProps> = ({
     );
   }
 
+  const isDisabled = taskFrom.isDisabled || taskTo.isDisabled;
+
   return (
-    <g className="arrow">
-      <path d={path} fill="none" strokeOpacity={0.1} strokeWidth="1.5" />
-      <polygon points={trianglePoints} />
+    <g className="arrow" opacity={isDisabled ? 0.2 : 1}>
+      <path
+        d={path}
+        fill="none"
+        stroke="#c6c6c6"
+        strokeOpacity={showArrow ? 1 : 0}
+        strokeWidth="2"
+      />
+      {showArrow ? <polygon points={trianglePoints} /> : null}
     </g>
   );
 };
@@ -63,7 +73,7 @@ const drownPathAndTriangle = (
       : taskTo.x1 - taskFrom.x2 - arrowIndent;
 
   const path = `M ${taskFrom.x2} ${taskFrom.y + taskHeight / 2} 
-  h ${arrowIndent} 
+  h ${arrowIndent}
   v ${(indexCompare * rowHeight) / 2} 
   ${taskFromHorizontalOffsetValue}
   V ${taskToEndPosition} 

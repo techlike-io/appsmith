@@ -11,10 +11,12 @@ export type GridBodyProps = {
   columnWidth: number;
   todayColor: string;
   rtl: boolean;
+  onGridBodyClicked: () => void;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
   columnWidth,
   dates,
+  onGridBodyClicked,
   rowHeight,
   rtl,
   svgWidth,
@@ -117,7 +119,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
     tickX += columnWidth;
   }
   return (
-    <g className="gridBody">
+    <g className="gridBody" onClick={onGridBodyClicked}>
       <g className="rows">{gridRows}</g>
       <g className="rowLines">{rowLines}</g>
       <g className="ticks">{ticks}</g>

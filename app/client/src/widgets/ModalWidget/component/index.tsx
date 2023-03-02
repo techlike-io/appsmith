@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import { Overlay, Classes } from "@blueprintjs/core";
+import { Overlay, Classes, Drawer } from "@blueprintjs/core";
 import { get, omit } from "lodash";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +27,9 @@ import { useWidgetDragResize } from "utils/hooks/dragResizeHooks";
 import AnalyticsUtil from "utils/AnalyticsUtil";
 import { Colors } from "constants/Colors";
 import { closeTableFilterPane } from "actions/widgetActions";
+import styles from "./modal.module.css";
+
+export type ModalComponentType = "MODAL" | "DRAWER";
 
 const Container = styled.div<{
   width?: number;
@@ -118,6 +121,7 @@ export type ModalComponentProps = {
   canEscapeKeyClose: boolean;
   overlayClassName?: string;
   scrollContents: boolean;
+  componentType: ModalComponentType;
   height?: number;
   top?: number;
   left?: number;
@@ -259,7 +263,48 @@ export default function ModalComponent(props: ModalComponentProps) {
     );
   };
 
-  const getEditorView = () => {
+  const getDrawerView = () => {
+    return (
+      <Drawer
+        autoFocus={false}
+        canEscapeKeyClose={false}
+        canOutsideClickClose={props.canOutsideClickClose}
+        className={!props.canOutsideClickClose ? styles.drawer : undefined}
+        enforceFocus={false}
+        hasBackdrop={props.canOutsideClickClose}
+        isOpen={props.isOpen}
+        onClose={props.onClose}
+        portalClassName={
+          !props.canOutsideClickClose ? styles.portal : undefined
+        }
+        portalContainer={props.portalContainer || undefined}
+        size={props.width}
+        transitionDuration={3000}
+        usePortal={props.portalContainer ? true : false}
+      >
+        <Container
+          backgroundColor={props.backgroundColor}
+          borderRadius={props.borderRadius}
+          bottom={props.bottom}
+          height={props.height}
+          isEditMode={props.isEditMode}
+          left={props.left}
+          maxWidth={props.maxWidth}
+          minSize={props.minSize}
+          right={props.bottom}
+          top={props.top}
+          width={props.width}
+          zIndex={
+            props.zIndex !== undefined ? props.zIndex : Layers.modalWidget
+          }
+        >
+          {getResizableContent()}
+        </Container>
+      </Drawer>
+    );
+  };
+
+  const getModalView = () => {
     return (
       <Overlay
         autoFocus={false}
@@ -303,6 +348,13 @@ export default function ModalComponent(props: ModalComponentProps) {
         </Container>
       </Overlay>
     );
+  };
+
+  const getEditorView = () => {
+    if (props.componentType === "MODAL") {
+      return getModalView();
+    }
+    return getDrawerView();
   };
 
   const getPageView = () => {

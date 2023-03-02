@@ -1,4 +1,4 @@
-import { Task, TaskType } from "./public-types";
+import { Status, Task, TaskType } from "./public-types";
 
 export interface BarTask extends Task {
   index: number;
@@ -12,6 +12,7 @@ export interface BarTask extends Task {
   barCornerRadius: number;
   handleWidth: number;
   barChildren: BarTask[];
+  disabled?: boolean;
   styles: {
     backgroundColor: string;
     backgroundSelectedColor: string;

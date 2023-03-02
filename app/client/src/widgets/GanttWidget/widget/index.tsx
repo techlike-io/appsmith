@@ -16,6 +16,7 @@ import { AutocompleteDataType } from "utils/autocomplete/CodemirrorTernService";
 import { EvaluationSubstitutionType } from "entities/DataTree/types";
 import { taskValidationFn } from "./helpers";
 import { Task, ViewMode } from "../types/public-types";
+import { useTasks } from "../component/hooks/useTasks";
 
 class GanttWidget extends BaseWidget<GanttWidgetProps, WidgetState> {
   static getPropertyPaneContentConfig() {
@@ -176,6 +177,26 @@ class GanttWidget extends BaseWidget<GanttWidgetProps, WidgetState> {
             validation: { type: ValidationTypes.BOOLEAN },
           },
           {
+            propertyName: "isDependencyVisible",
+            label: "Dependency visible",
+            helpText: "Controls the visibility of the dependency",
+            controlType: "SWITCH",
+            isJSConvertible: true,
+            isBindProperty: true,
+            isTriggerProperty: false,
+            validation: { type: ValidationTypes.BOOLEAN },
+          },
+          {
+            propertyName: "isSectorVisible",
+            label: "Sector visible",
+            helpText: "Controls the visibility of the sectors",
+            controlType: "SWITCH",
+            isJSConvertible: true,
+            isBindProperty: true,
+            isTriggerProperty: false,
+            validation: { type: ValidationTypes.BOOLEAN },
+          },
+          {
             propertyName: "isDisabled",
             label: "Disabled",
             controlType: "SWITCH",
@@ -326,21 +347,15 @@ class GanttWidget extends BaseWidget<GanttWidgetProps, WidgetState> {
   }
 
   getPageView() {
-    const tasks = this.props.sourceData.map((task) => {
-      return {
-        ...task,
-        start: new Date(task.start),
-        end: new Date(task.end),
-      };
-    });
-
     return (
       <GanttComponent
         accentColor={this.props.accentColor}
         alignWidget={this.props.alignWidget}
+        isDependencyVisible={this.props.isDependencyVisible}
         isDisabled={this.props.isDisabled}
         isDynamicHeightEnabled={isAutoHeightEnabledForWidget(this.props)}
         isLoading={this.props.isLoading}
+        isSectorVisible={this.props.isSectorVisible}
         isSwitchedOn={!!this.props.isSwitchedOn}
         key={this.props.widgetId}
         label={this.props.label}
@@ -349,7 +364,7 @@ class GanttWidget extends BaseWidget<GanttWidgetProps, WidgetState> {
         labelTextColor={this.props.labelTextColor}
         labelTextSize={this.props.labelTextSize}
         onChange={this.onChange}
-        sourceData={tasks}
+        sourceData={this.props.sourceData}
         viewMode={this.props.viewMode}
         widgetId={this.props.widgetId}
       />

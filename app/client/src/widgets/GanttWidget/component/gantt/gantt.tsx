@@ -23,6 +23,7 @@ import { DateSetup } from "../../types/date-setup";
 import { HorizontalScroll } from "../other/horizontal-scroll";
 import { removeHiddenTasks, sortTasks } from "../../helpers/other-helper";
 import styles from "./gantt.module.css";
+import { getDependentTaskIds } from "widgets/GanttWidget/widget/helpers";
 
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
@@ -35,6 +36,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   preStepsCount = 1,
   locale = "en-GB",
   barFill = 60,
+  hideDependencies = false,
   barCornerRadius = 3,
   barProgressColor = "#a3a3ff",
   barProgressSelectedColor = "#8282f5",
@@ -48,9 +50,9 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   milestoneBackgroundSelectedColor = "#f29e4c",
   rtl = false,
   handleWidth = 8,
-  timeStep = 300000,
+  timeStep = 86400000 / 24,
   arrowColor = "grey",
-  fontFamily = "Arial, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
+  fontFamily = "Nunito Sans, Arial, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
   fontSize = "14px",
   arrowIndent = 20,
   todayColor = "rgba(252, 248, 227, 0.5)",
@@ -112,13 +114,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       viewMode,
       preStepsCount,
     );
-    let newDates = seedDates(startDate, endDate, viewMode);
-    if (rtl) {
-      newDates = newDates.reverse();
-      if (scrollX === -1) {
-        setScrollX(newDates.length * columnWidth);
-      }
-    }
+    const newDates = seedDates(startDate, endDate, viewMode);
+
     setDateSetup({ dates: newDates, viewMode });
     setBarTasks(
       convertToBarTasks(
@@ -162,9 +159,45 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     milestoneBackgroundColor,
     milestoneBackgroundSelectedColor,
     rtl,
-    scrollX,
     onExpanderClick,
   ]);
+
+  useEffect(() => {
+    setSelectedTask(undefined);
+  }, [tasks]);
+
+  useEffect(() => {
+    if (selectedTask) {
+      const dependencies = [
+        selectedTask?.id,
+        ...getDependentTaskIds(tasks, selectedTask?.id),
+        ...tasks
+          .filter((t) => t.dependencies?.includes(selectedTask?.id))
+          ?.map((t) => t.id),
+      ];
+      setBarTasks((prev) =>
+        prev.map((task) => {
+          if (dependencies.includes(task.id)) {
+            return {
+              ...task,
+              isDisabled: false,
+            };
+          }
+          return {
+            ...task,
+            isDisabled: true,
+          };
+        }),
+      );
+    } else {
+      setBarTasks((prev) =>
+        prev.map((task) => ({
+          ...task,
+          isDisabled: false,
+        })),
+      );
+    }
+  }, [selectedTask]);
 
   useEffect(() => {
     if (
@@ -389,6 +422,17 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       onExpanderClick({ ...task, hideChildren: !task.hideChildren });
     }
   };
+
+  const handleTaskOnListClick = (task: Task) => {
+    const clickedTask = barTasks.find((t) => t.id === task.id);
+    setScrollX((clickedTask?.x1 || 0) - 50);
+    handleSelectedTask(task.id);
+  };
+
+  const handleGridBodyClicked = () => {
+    setSelectedTask(undefined);
+  };
+
   const gridProps: GridProps = {
     columnWidth,
     svgWidth,
@@ -397,6 +441,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     dates: dateSetup.dates,
     todayColor,
     rtl,
+    onGridBodyClicked: handleGridBodyClicked,
   };
   const calendarProps: CalendarProps = {
     dateSetup,
@@ -414,6 +459,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     ganttEvent,
     selectedTask,
     rowHeight,
+    hideDependencies,
     taskHeight,
     columnWidth,
     arrowColor,
@@ -448,6 +494,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     taskListRef,
     setSelectedTask: handleSelectedTask,
     onExpanderClick: handleExpanderClick,
+    onTaskOnListClick: handleTaskOnListClick,
     TaskListHeader,
     TaskListTable,
   };

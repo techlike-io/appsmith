@@ -19,3 +19,10 @@
   user-select: none;
   stroke-width: 0;
 }
+
+.barSelectedBackground {
+  user-select: none;
+  stroke-width: 1;
+  paint-order: "stroke";
+  stroke: #353333;
+}

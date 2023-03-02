@@ -1,0 +1,9 @@
+.portal {
+    pointer-events: none;
+  }
+
+  .drawer {
+    pointer-events: all;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }

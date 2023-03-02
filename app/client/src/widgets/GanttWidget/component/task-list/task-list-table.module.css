@@ -25,9 +25,18 @@
 }
 
 .taskListExpander {
+  width: 1.5rem;
   color: rgb(86 86 86);
   font-size: 0.6rem;
   padding: 0.15rem 0.2rem 0rem 0.2rem;
+  user-select: none;
+  cursor: pointer;
+}
+.groupListExpander {
+  width: 1.5rem;
+  color: rgb(175, 173, 225);
+  font-size: 0.6rem;
+  padding: 0.15rem 0.2rem 0rem 1rem;
   user-select: none;
   cursor: pointer;
 }
@@ -35,4 +44,13 @@
   font-size: 0.6rem;
   padding-left: 1rem;
   user-select: none;
+}
+.taskLabel {
+  padding-left: 0.75rem;
+}
+.groupLabel {
+  padding-left: 0.75rem;
+}
+.subtaskLabel {
+  padding-left: 2.25rem;
 }

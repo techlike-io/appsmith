@@ -1,7 +1,7 @@
 import { Classes, Switch } from "@blueprintjs/core";
 import { LabelPosition } from "components/constants";
 import { BlueprintControlTransform } from "constants/DefaultTheme";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { ComponentProps } from "widgets/BaseComponent";
 import { AlignWidgetTypes } from "widgets/constants";
@@ -10,6 +10,8 @@ import { FontStyleTypes } from "constants/WidgetConstants";
 import { darkenColor } from "widgets/WidgetUtils";
 import { Gantt } from "./gantt/gantt";
 import { Task, ViewMode } from "../types/public-types";
+import { formatTasks, useTasks } from "./hooks/useTasks";
+import useRootHeight from "./hooks/useRootHeight";
 
 export interface GanttComponentProps extends ComponentProps {
   sourceData: Task[];
@@ -20,104 +22,14 @@ export interface GanttComponentProps extends ComponentProps {
   isLoading: boolean;
   alignWidget: AlignWidgetTypes;
   labelPosition: LabelPosition;
+  isSectorVisible: boolean;
   accentColor: string;
+  isDependencyVisible: boolean;
   inputRef?: (ref: HTMLInputElement | null) => any;
   labelTextColor?: string;
   labelTextSize?: string;
   labelStyle?: string;
   isDynamicHeightEnabled?: boolean;
-}
-
-export function initTasks() {
-  const currentDate = new Date();
-  const tasks: Task[] = [
-    {
-      start: new Date("2023-01-31T23:00:00.000Z"),
-      end: new Date("2023-02-14T23:00:00.000Z"),
-      name: "Some Projects",
-      id: "ProjectSample",
-      progress: 25,
-      type: "project",
-      hideChildren: false,
-      displayOrder: 1,
-    },
-    {
-      start: new Date("2023-01-31T23:00:00.000Z"),
-      end: new Date("2023-02-02T11:28:00.000Z"),
-      name: "Idea",
-      id: "Task 0",
-      progress: 45,
-      type: "task",
-      project: "ProjectSample",
-      displayOrder: 2,
-    },
-    {
-      start: new Date("2023-02-01T23:00:00.000Z"),
-      end: new Date("2023-02-03T23:00:00.000Z"),
-      name: "Research",
-      id: "Task 1",
-      progress: 25,
-      dependencies: ["Task 0"],
-      type: "task",
-      project: "ProjectSample",
-      displayOrder: 3,
-    },
-    {
-      start: new Date("2023-02-03T23:00:00.000Z"),
-      end: new Date("2023-02-07T23:00:00.000Z"),
-      name: "Discussion with team",
-      id: "Task 2",
-      groupExpanded: true,
-      progress: 10,
-      dependencies: ["Task 1", "Task 4"],
-      type: "task",
-      project: "ProjectSample",
-      displayOrder: 4,
-    },
-    {
-      start: new Date("2023-02-07T23:00:00.000Z"),
-      end: new Date("2023-02-08T23:00:00.000Z"),
-      name: "Developing",
-      id: "Task 3",
-      progress: 2,
-      dependencies: ["Task 2"],
-      type: "task",
-      project: "ProjectSample",
-      displayOrder: 5,
-    },
-    {
-      start: new Date("2023-02-07T23:00:00.000Z"),
-      end: new Date("2023-02-09T23:00:00.000Z"),
-      name: "Review",
-      id: "Task 4",
-      type: "task",
-      progress: 70,
-      dependencies: ["Task 2", "Task 0"],
-      project: "ProjectSample",
-      displayOrder: 6,
-    },
-    {
-      start: new Date("2023-02-14T23:00:00.000Z"),
-      end: new Date("2023-02-14T23:00:00.000Z"),
-      name: "Release",
-      id: "Task 6",
-      progress: 1,
-      type: "milestone",
-      dependencies: ["Task 4", "Task 0"],
-      project: "ProjectSample",
-      displayOrder: 7,
-    },
-    {
-      start: new Date("2023-02-17T23:00:00.000Z"),
-      end: new Date("2023-02-18T23:00:00.000Z"),
-      name: "Party Time",
-      id: "Task 9",
-      progress: 0,
-      isDisabled: true,
-      type: "task",
-    },
-  ];
-  return tasks;
 }
 
 export function getStartEndDateForProject(tasks: Task[], projectId: string) {
@@ -203,6 +115,8 @@ function GanttComponent({
   accentColor,
   viewMode = ViewMode.Day,
   sourceData,
+  isDependencyVisible,
+  isSectorVisible,
   alignWidget = AlignWidgetTypes.LEFT,
   inputRef,
   isDisabled,
@@ -224,18 +138,71 @@ function GanttComponent({
   } else if (viewMode === ViewMode.Week) {
     columnWidth = 250;
   }
+  const [hiddenProjects, setHiddenProjects] = useState<string[]>([]);
+  const { tasks } = useTasks(sourceData, hiddenProjects, isSectorVisible);
+  // const [tasks, setTasks] = useState<Task[]>([]);
+  const rootHeight = useRootHeight();
+
+  // useEffect(() => {
+  //   const tasks = formatTasks(sourceData, hiddenProjects);
+  //   setTasks(tasks);
+  // }, [sourceData, hiddenProjects]);
+
+  // const handleTaskChange = (task: Task) => {
+  //   console.log("On date change Id:" + task.id);
+  //   let newTasks = tasks.map((t) => (t.id === task.id ? task : t));
+  //   if (task.project) {
+  //     const [start, end] = getStartEndDateForProject(newTasks, task.project);
+  //     const project =
+  //       newTasks[newTasks.findIndex((t) => t.id === task.project)];
+
+  //     if (
+  //       project !== undefined &&
+  //       (project.start.getTime() !== start.getTime() ||
+  //         project.end.getTime() !== end.getTime())
+  //     ) {
+  //       const changedProject = { ...project, start, end };
+  //       newTasks = newTasks.map((t) =>
+  //         t.id === task.project ? changedProject : t,
+  //       );
+  //     }
+  //   }
+  //   setTasks(newTasks);
+  // };
+
+  const handleExpanderClick = (task: Task) => {
+    if (!task.id) return;
+    if (hiddenProjects.includes(task.id)) {
+      setHiddenProjects((h) => h.filter((p) => p !== task.id));
+    } else {
+      setHiddenProjects([...hiddenProjects, task.id]);
+    }
+  };
+
+  console.log(isSectorVisible);
 
   return (
     <GanttComponentContainer accentColor={accentColor}>
       {sourceData && sourceData.length > 0 && (
         <Gantt
           columnWidth={columnWidth}
+          ganttHeight={
+            document.getElementById("art-board")
+              ? undefined
+              : rootHeight
+              ? rootHeight - 250
+              : undefined
+          }
+          hideDependencies={!isDependencyVisible}
+          listCellWidth={"200px"}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           locale="pl"
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onDateChange={() => {}}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onExpanderClick={() => {}}
-          tasks={sourceData}
+          onExpanderClick={handleExpanderClick}
+          rowHeight={40}
+          tasks={tasks}
           viewMode={viewMode}
         />
       )}

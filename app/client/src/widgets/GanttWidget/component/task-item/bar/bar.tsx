@@ -20,18 +20,33 @@ export const Bar: React.FC<TaskItemProps> = ({
     task.height,
   );
   const handleHeight = task.height - 2;
+
+  let color = "#b8c2cc";
+  switch (task.status) {
+    case "completed":
+      color = "#7db59a";
+      break;
+    case "inProgress":
+      color = "#bcbcff";
+      break;
+  }
+
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
         barCornerRadius={task.barCornerRadius}
         height={task.height}
+        isDisabled={task.isDisabled}
         isSelected={isSelected}
         onMouseDown={(e) => {
           isDateChangeable && onEventStart("move", task, e);
         }}
         progressWidth={task.progressWidth}
         progressX={task.progressX}
-        styles={task.styles}
+        styles={{
+          ...task.styles,
+          backgroundColor: color,
+        }}
         width={task.x2 - task.x1}
         x={task.x1}
         y={task.y}

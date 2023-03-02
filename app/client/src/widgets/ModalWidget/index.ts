@@ -40,6 +40,7 @@ export const CONFIG = {
     detachFromLayout: true,
     canOutsideClickClose: true,
     shouldScrollContents: true,
+    componentType: "MODAL",
     widgetName: "Modal",
     children: [],
     version: 2,

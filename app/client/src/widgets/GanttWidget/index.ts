@@ -26,6 +26,8 @@ export const CONFIG = {
     labelPosition: LabelPosition.Left,
     version: 1,
     isDisabled: false,
+    isDependencyVisible: true,
+    isSectorVisible: true,
     animateLoading: true,
   },
   properties: {

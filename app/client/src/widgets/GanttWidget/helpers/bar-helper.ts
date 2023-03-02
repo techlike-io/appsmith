@@ -173,7 +173,10 @@ const convertToBar = (
     rtl,
   );
   const y = taskYCoordinate(index, rowHeight, taskHeight);
-  const hideChildren = task.type === "project" ? task.hideChildren : undefined;
+  const hideChildren =
+    task.type === "project" || task.type === "group"
+      ? task.hideChildren
+      : undefined;
 
   const styles = {
     backgroundColor: barBackgroundColor,
@@ -375,6 +378,7 @@ const dateByX = (
     newDate.getTime() +
       (newDate.getTimezoneOffset() - taskDate.getTimezoneOffset()) * 60000,
   );
+  // newDate.setHours(0, 0, 0, 0);
   return newDate;
 };
 
@@ -528,6 +532,7 @@ const handleTaskBySVGMouseEventForBar = (
           xStep,
           timeStep,
         );
+        console.log("changedTask.start", changedTask.start);
         changedTask.end = dateByX(
           newMoveX2,
           selectedTask.x2,
@@ -535,6 +540,7 @@ const handleTaskBySVGMouseEventForBar = (
           xStep,
           timeStep,
         );
+        console.log("changedTask.end", changedTask.end);
         changedTask.x1 = newMoveX1;
         changedTask.x2 = newMoveX2;
         const [progressWidth, progressX] = progressWithByParams(
@@ -586,4 +592,12 @@ const handleTaskBySVGMouseEventForMilestone = (
     }
   }
   return { isChanged, changedTask };
+};
+
+export const truncateTimeFromDate = (date: Date): Date => {
+  const truncatedDate = new Date(date);
+
+  truncatedDate.setHours(0, 0, 0, 0);
+
+  return truncatedDate;
 };

@@ -10,12 +10,14 @@ import {
   GanttContentMoveAction,
   GanttEvent,
 } from "../../types/gantt-task-actions";
+import { getDependentTaskIds } from "widgets/GanttWidget/widget/helpers";
 
 export type TaskGanttContentProps = {
   tasks: BarTask[];
   dates: Date[];
   ganttEvent: GanttEvent;
   selectedTask: BarTask | undefined;
+  hideDependencies: boolean;
   rowHeight: number;
   columnWidth: number;
   timeStep: number;
@@ -40,6 +42,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   fontFamily,
   fontSize,
   ganttEvent,
+  hideDependencies,
   onClick,
   onDateChange,
   onDelete,
@@ -271,6 +274,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                 key={`Arrow from ${task.id} to ${tasks[child.index].id}`}
                 rowHeight={rowHeight}
                 rtl={rtl}
+                showArrow={!hideDependencies}
                 taskFrom={task}
                 taskHeight={taskHeight}
                 taskTo={tasks[child.index]}

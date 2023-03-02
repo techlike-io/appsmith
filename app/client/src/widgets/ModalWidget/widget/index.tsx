@@ -28,6 +28,27 @@ export class ModalWidget extends BaseWidget<ModalWidgetProps, WidgetState> {
         sectionName: "General",
         children: [
           {
+            propertyName: "componentType",
+            label: "Component type",
+            helpText: "Control the behaviour of the component",
+            controlType: "DROP_DOWN",
+            defaultValue: "MODAL",
+            options: [
+              {
+                label: "Modal",
+                value: "MODAL",
+              },
+              {
+                label: "Drawer",
+                value: "DRAWER",
+              },
+            ],
+            isJSConvertible: true,
+            isBindProperty: true,
+            isTriggerProperty: false,
+            validation: { type: ValidationTypes.TEXT },
+          },
+          {
             helpText: "Enables scrolling for content inside the widget",
             propertyName: "shouldScrollContents",
             label: "Scroll Contents",
@@ -215,7 +236,9 @@ export class ModalWidget extends BaseWidget<ModalWidgetProps, WidgetState> {
 
   makeModalComponent(content: ReactNode, isEditMode: boolean) {
     const artBoard = document.getElementById("art-board");
-    const portalContainer = isEditMode && artBoard ? artBoard : undefined;
+    const root = document.getElementById("root");
+    const portalContainer =
+      isEditMode && artBoard ? artBoard : root ? root : document.body;
     const {
       focusedWidget,
       isDragging,
@@ -240,6 +263,7 @@ export class ModalWidget extends BaseWidget<ModalWidgetProps, WidgetState> {
         canEscapeKeyClose={!!this.props.canEscapeKeyClose}
         canOutsideClickClose={!!this.props.canOutsideClickClose}
         className={`t--modal-widget ${generateClassName(this.props.widgetId)}`}
+        componentType={this.props.componentType}
         enableResize={isResizeEnabled}
         height={this.props.height}
         isDynamicHeightEnabled={isAutoHeightEnabledForWidget(this.props)}

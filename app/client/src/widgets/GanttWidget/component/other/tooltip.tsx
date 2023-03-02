@@ -121,23 +121,57 @@ export const StandardTooltipContent: React.FC<{
     fontSize,
     fontFamily,
   };
+
+  let status = "Planowane";
+
+  switch (task.status) {
+    case "inProgress":
+      status = "W realizacji -";
+      break;
+    case "completed":
+      status = "Zrealizowane";
+      break;
+  }
+
   return (
     <div className={styles.tooltipDefaultContainer} style={style}>
       <b style={{ fontSize: fontSize + 6 }}>{`${
         task.name
-      }: ${task.start.getDate()}-${task.start.getMonth() +
-        1}-${task.start.getFullYear()} - ${task.end.getDate()}-${task.end.getMonth() +
-        1}-${task.end.getFullYear()}`}</b>
+      }: ${task.start.getDate()}.${task.start.getMonth() +
+        1}.${task.start.getFullYear()} - ${task.end.getDate()}.${task.end.getMonth() +
+        1}.${task.end.getFullYear()}`}</b>
       {task.end.getTime() - task.start.getTime() !== 0 && (
-        <p className={styles.tooltipDefaultContainerParagraph}>{`Duration: ${~~(
+        <p
+          className={styles.tooltipDefaultContainerParagraph}
+        >{`Czas trwania: ${~~(
           (task.end.getTime() - task.start.getTime()) /
           (1000 * 60 * 60 * 24)
-        )} day(s)`}</p>
+        )} dni`}</p>
       )}
 
       <p className={styles.tooltipDefaultContainerParagraph}>
-        {!!task.progress && `Progress: ${task.progress} %`}
+        {`Status: ${status} ${
+          task.status === "inProgress" ? `${task.progress}%` : ""
+        }`}
       </p>
+      <p className={styles.tooltipDefaultContainerParagraph}>
+        {task.assignees &&
+          task.assignees?.length > 0 &&
+          `Zaangażowani: ${task.assignees?.join(", ")}`}
+      </p>
+      <p className={styles.tooltipDefaultContainerParagraph}>
+        {!!task.place && `Miejsce: ${task.place}`}
+      </p>
+      {!!task.actions && (
+        <p className={styles.tooltipDefaultContainerParagraph}>
+          {`Działania: ${task.actions}`}
+        </p>
+      )}
+      {!!task.comments && (
+        <p className={styles.tooltipDefaultContainerParagraph}>
+          {`Komentarz: ${task.comments}`}
+        </p>
+      )}
     </div>
   );
 };

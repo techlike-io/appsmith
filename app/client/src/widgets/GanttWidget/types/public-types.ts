@@ -9,16 +9,19 @@ export enum ViewMode {
   QuarterYear = "QuarterYear",
   Year = "Year",
 }
-export type TaskType = "task" | "milestone" | "project";
+export type TaskType = "task" | "milestone" | "project" | "group";
+export type Status = "planned" | "inProgress" | "completed";
 export interface Task {
   id: string;
   type: TaskType;
   name: string;
   start: Date;
   end: Date;
+  status?: Status;
   /**
    * From 0 to 100
    */
+  group?: string;
   groupExpanded?: boolean;
   progress: number;
   styles?: {
@@ -27,11 +30,16 @@ export interface Task {
     progressColor?: string;
     progressSelectedColor?: string;
   };
+  duration?: number;
+  assignees?: string[];
   isDisabled?: boolean;
   project?: string;
   dependencies?: string[];
   hideChildren?: boolean;
   displayOrder?: number;
+  place?: string;
+  actions?: string;
+  comments?: string;
 }
 
 export interface EventOption {
@@ -82,6 +90,7 @@ export interface DisplayOption {
   /**
    * Specifies the month name language. Able formats: ISO 639-2, Java Locale
    */
+  hideDependencies?: boolean;
   locale?: string;
   rtl?: boolean;
 }

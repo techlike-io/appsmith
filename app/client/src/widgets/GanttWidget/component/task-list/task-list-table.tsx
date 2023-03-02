@@ -35,11 +35,13 @@ export const TaskListTableDefault: React.FC<{
   selectedTaskId: string;
   setSelectedTask: (taskId: string) => void;
   onExpanderClick: (task: Task) => void;
+  onTaskOnListClick: (task: Task) => void;
 }> = ({
   fontFamily,
   fontSize,
   locale,
   onExpanderClick,
+  onTaskOnListClick,
   rowHeight,
   rowWidth,
   tasks,
@@ -64,6 +66,20 @@ export const TaskListTableDefault: React.FC<{
           expanderSymbol = "▶";
         }
 
+        let textClassName = "";
+
+        if (t.type === "task") {
+          if (t.group) {
+            textClassName = styles.subtaskLabel;
+          } else {
+            textClassName = styles.taskLabel;
+          }
+        }
+
+        if (t.type === "group") {
+          textClassName = styles.groupLabel;
+        }
+
         return (
           <div
             className={styles.taskListTableRow}
@@ -78,18 +94,25 @@ export const TaskListTableDefault: React.FC<{
               }}
               title={t.name}
             >
-              <div className={styles.taskListNameWrapper}>
+              <div
+                className={styles.taskListNameWrapper}
+                onClick={() => {
+                  console.log("");
+                }}
+              >
                 <div
                   className={
                     expanderSymbol
-                      ? styles.taskListExpander
+                      ? t.type === "group"
+                        ? styles.groupListExpander
+                        : styles.taskListExpander
                       : styles.taskListEmptyExpander
                   }
                   onClick={() => onExpanderClick(t)}
                 >
                   {expanderSymbol}
                 </div>
-                <div>{t.name}</div>
+                <div className={textClassName}>{t.name}</div>
               </div>
             </div>
           </div>

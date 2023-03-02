@@ -6,6 +6,8 @@ import { BarSmall } from "./bar/bar-small";
 import { Milestone } from "./milestone/milestone";
 import { Project } from "./project/project";
 import style from "./task-list.module.css";
+import { Group } from "./group/group";
+import { group } from "console";
 
 export type TaskItemProps = {
   task: BarTask;
@@ -39,6 +41,9 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
   const [taskItem, setTaskItem] = useState<JSX.Element>(<div />);
   const [isTextInside, setIsTextInside] = useState(true);
 
+  const displayText =
+    task.type === "group" ? (task.hideChildren ? true : false) : true;
+
   useEffect(() => {
     switch (task.typeInternal) {
       case "milestone":
@@ -46,6 +51,9 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
         break;
       case "project":
         setTaskItem(<Project {...props} />);
+        break;
+      case "group":
+        setTaskItem(<Group {...props} />);
         break;
       case "smalltask":
         setTaskItem(<BarSmall {...props} />);
@@ -106,20 +114,23 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
       onMouseLeave={(e) => {
         onEventStart("mouseleave", task, e);
       }}
+      opacity={task.isDisabled ? 0.2 : 1}
     >
       {taskItem}
-      <text
-        className={
-          isTextInside
-            ? style.barLabel
-            : style.barLabel && style.barLabelOutside
-        }
-        ref={textRef}
-        x={getX()}
-        y={task.y + taskHeight * 0.5}
-      >
-        {task.name}
-      </text>
+      {displayText && (
+        <text
+          className={
+            isTextInside
+              ? style.barLabel
+              : style.barLabel && style.barLabelOutside
+          }
+          ref={textRef}
+          x={getX()}
+          y={task.y + taskHeight * 0.5}
+        >
+          {task.name}
+        </text>
+      )}
     </g>
   );
 };

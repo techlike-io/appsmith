@@ -17,6 +17,21 @@ export const BarSmall: React.FC<TaskItemProps> = ({
     task.y,
     task.height,
   );
+
+  let color = "#b8c2cc";
+  let progress = "0";
+
+  switch (task.status) {
+    case "completed":
+      color = "#7db59a";
+      progress = "0";
+      break;
+    case "inProgress":
+      color = "#bcbcff";
+      progress = progressPoint;
+      break;
+  }
+
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
@@ -28,7 +43,10 @@ export const BarSmall: React.FC<TaskItemProps> = ({
         }}
         progressWidth={task.progressWidth}
         progressX={task.progressX}
-        styles={task.styles}
+        styles={{
+          ...task.styles,
+          backgroundColor: color,
+        }}
         width={task.x2 - task.x1}
         x={task.x1}
         y={task.y}
