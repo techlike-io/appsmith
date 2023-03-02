@@ -1,17 +1,22 @@
-name: Appsmith Github Release Workflow
+name: Prod CI
 
-# This workflow builds Docker images for server and client, and then pushes them to Docker Hub.
-# The docker-tag with which this push happens is the release tag (e.g., v1.2.3 etc.).
-# In addition to the above tag, unless the git-tag matches `*beta*`, we also push to the `latest` docker-tag.
-# This workflow does NOT run tests.
-# This workflow is automatically triggered when a release is created on GitHub.
-
+# 1
+# Controls when the workflow will run
 on:
-  # Ref: <https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#release>.
   release:
     types:
       # Unlike the `released` event, the `published` event triggers for pre-releases as well.
       - released
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Image version"
+        required: true
+#2
+env:
+  IMAGE_NAME: appsmith-ce
 
 jobs:
   prelude:
@@ -32,7 +37,7 @@ jobs:
       - name: Get the version
         id: get_version
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
+          tag="$(date +%s)"
           echo "tag=$tag" >> $GITHUB_OUTPUT
           if [[ $tag == *"beta"* ]]; then
             echo "is_beta=true" >> $GITHUB_OUTPUT
@@ -40,11 +45,11 @@ jobs:
             echo "is_beta=false" >> $GITHUB_OUTPUT
           fi
 
-  buildClient:
+  client-build:
     needs:
       - prelude
 
-    runs-on: ubuntu-latest-4-cores
+    runs-on: ubuntu-latest
 
     defaults:
       run:
@@ -81,6 +86,7 @@ jobs:
       - name: Create the bundle
         env:
           REACT_APP_ENVIRONMENT: "PRODUCTION"
+          CI: "" # Disable warnings as errors
           REACT_APP_FUSIONCHARTS_LICENSE_KEY: "${{ secrets.APPSMITH_FUSIONCHARTS_LICENSE_KEY }}"
           REACT_APP_SEGMENT_CE_KEY: "${{ secrets.APPSMITH_SEGMENT_CE_KEY }}"
           REACT_APP_VERSION_ID: "${{ needs.prelude.outputs.tag }}"
@@ -98,7 +104,7 @@ jobs:
           name: client-build
           path: app/client/build/
 
-  buildServer:
+  server-build:
     needs:
       - prelude
 
@@ -147,7 +153,7 @@ jobs:
           name: server-build
           path: app/server/dist/
 
-  buildRts:
+  rts-build:
     needs:
       - prelude
 
@@ -187,7 +193,7 @@ jobs:
           path: app/rts/rts-dist.tar
 
   package:
-    needs: [prelude, buildClient, buildServer, buildRts]
+    needs: [prelude, client-build, server-build, rts-build]
 
     runs-on: ubuntu-latest
     permissions:
@@ -195,11 +201,8 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout the merged commit from PR and base branch
+      - name: Checkout the merged commit
         uses: actions/checkout@v3
-
-      - name: Set up Depot CLI
-        uses: depot/setup-action@v1
 
       - name: Download the client build artifact
         uses: actions/download-artifact@v3
@@ -225,92 +228,25 @@ jobs:
           echo "Cleaning up the tar files"
           rm app/rts/dist/rts-dist.tar
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Build container image
+        run: docker build -t $(echo ${{ secrets.REGISTRY }})/$(echo $IMAGE_NAME):prod --build-arg APPSMITH_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }} .
 
-      - name: Build and push client image
-        uses: depot/build-push-action@v1
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          context: app/client
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-editor:${{needs.prelude.outputs.tag}}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      # Only build & tag with latest if the tag doesn't contain beta
-      - name: Build and push client image latest
-        if: needs.prelude.outputs.is_beta == 'false'
-        uses: depot/build-push-action@v1
-        with:
-          context: app/client
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-editor:latest
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
 
-      - name: Build and push fat image
-        uses: depot/build-push-action@v1
-        with:
-          context: .
-          push: true
-          platforms: linux/arm64,linux/amd64
-          build-args: |
-            APPSMITH_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }}
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-ce:${{needs.prelude.outputs.tag}}
+      - name: Remove all old images
+        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -w 'latest\|prod' | grep -o "sha.*") --force; else echo "No repository"; fi
 
-      # Only build & tag with latest if the tag doesn't contain beta
-      - name: Build and push fat image latest
-        if: needs.prelude.outputs.is_beta == 'false'
-        uses: depot/build-push-action@v1
-        with:
-          context: .
-          push: true
-          platforms: linux/arm64,linux/amd64
-          build-args: |
-            APPSMITH_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }}
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-ce:latest
+      - name: Push image to DigitalOcean Container Registry as prod image
+        run: docker push $(echo ${{ secrets.REGISTRY }})/$(echo $IMAGE_NAME):prod
 
-      - name: Build and push server image
-        uses: depot/build-push-action@v1
-        with:
-          context: app/server
-          push: true
-          build-args: |
-            APPSMITH_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }}
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-server:${{needs.prelude.outputs.tag}}
+      - name: Configure kubectl to point to the prod instance
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.PROD_CLUSTER_ID }}
 
-      # Only build & tag with latest if the tag doesn't contain beta
-      - name: Build and push server image latest
-        if: needs.prelude.outputs.is_beta == 'false'
-        uses: depot/build-push-action@v1
-        with:
-          context: app/server
-          push: true
-          build-args: |
-            APPSMITH_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }}
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-server:latest
-
-      - name: Build and push RTS image
-        uses: depot/build-push-action@v1
-        with:
-          context: app/rts
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-rts:${{needs.prelude.outputs.tag}}
-
-      # Only build & tag with latest if the tag doesn't contain beta
-      - name: Build and push RTS image latest
-        if: needs.prelude.outputs.is_beta == 'false'
-        uses: depot/build-push-action@v1
-        with:
-          context: app/rts
-          push: true
-          build-args: |
-            APPSMITH_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }}
-          tags: |
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-rts:latest
+      - name: Deploy the new image to the prod namespace
+        run: kubectl rollout restart statefulset ${{ secrets.PROD_HELM_RELEASE_NAME }} --namespace ${{ secrets.PROD_HELM_RELEASE_NAMESPACE }}
