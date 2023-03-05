@@ -58,12 +58,12 @@ export const taskValidationFn = (
             "All task properties are required: start, end, name, id, type",
           );
         }
-        if (!(task.start instanceof Date)) {
-          task.start = new Date(task.start);
-        }
-        if (!(task.end instanceof Date)) {
-          task.end = new Date(task.end);
-        }
+        // if (!(task.start instanceof Date)) {
+        //   task.start = new Date(task.start);
+        // }
+        // if (!(task.end instanceof Date)) {
+        //   task.end = new Date(task.end);
+        // }
         if (task.progress === undefined) {
           task.progress = 0;
         }

@@ -12,6 +12,7 @@ import { Gantt } from "./gantt/gantt";
 import { Task, ViewMode } from "../types/public-types";
 import { formatTasks, useTasks } from "./hooks/useTasks";
 import useRootHeight from "./hooks/useRootHeight";
+import moment from "moment";
 
 export interface GanttComponentProps extends ComponentProps {
   sourceData: Task[];
@@ -139,7 +140,8 @@ function GanttComponent({
     columnWidth = 250;
   }
   const [hiddenProjects, setHiddenProjects] = useState<string[]>([]);
-  const { tasks } = useTasks(sourceData, hiddenProjects, isSectorVisible);
+  const [finalTasks, setFinalTasks] = useState<Task[]>(sourceData);
+  const { tasks } = useTasks(finalTasks, hiddenProjects, isSectorVisible);
   // const [tasks, setTasks] = useState<Task[]>([]);
   const rootHeight = useRootHeight();
 
@@ -179,41 +181,29 @@ function GanttComponent({
     }
   };
 
-  const ganttComponent = useMemo(() => {
-    return (
-      <GanttComponentContainer accentColor={accentColor}>
-        {sourceData && sourceData.length > 0 && (
-          <Gantt
-            columnWidth={columnWidth}
-            ganttHeight={
-              document.getElementById("art-board")
-                ? undefined
-                : rootHeight
-                ? rootHeight - 250
-                : undefined
+  const handleDateChange = (task: Task) => {
+    setFinalTasks((t) => {
+      return t.map((t) =>
+        t.id === task.id
+          ? {
+              ...t,
+              start: task.start,
+              end: task.end,
             }
-            hideDependencies={!isDependencyVisible}
-            listCellWidth={"200px"}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            locale="pl"
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onClick={onChange}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onDateChange={() => {}}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onExpanderClick={handleExpanderClick}
-            rowHeight={40}
-            tasks={tasks}
-            viewMode={viewMode}
-          />
-        )}
-      </GanttComponentContainer>
-    );
+          : t,
+      );
+    });
+    console.log(finalTasks);
+    onChange(task);
+  };
+
+  useEffect(() => {
+    setFinalTasks(sourceData);
   }, [sourceData]);
 
   return (
     <GanttComponentContainer accentColor={accentColor}>
-      {sourceData && sourceData.length > 0 && (
+      {tasks && tasks.length > 0 && (
         <Gantt
           columnWidth={columnWidth}
           ganttHeight={
@@ -230,7 +220,7 @@ function GanttComponent({
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onClick={() => {}}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onDateChange={onChange}
+          onDateChange={handleDateChange}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onExpanderClick={handleExpanderClick}
           rowHeight={40}
